@@ -12,9 +12,10 @@ connection = sqlite3.connect(dataBasePath)
 cursor = connection.cursor()
 
 create_user_table_query = '''CREATE TABLE users (
-    uid INTEGER,
-	email TEXT,
-	password TEXT);'''
+    uid INTEGER NOT NULL,
+	email VARCHAR2(17) NOT NULL,
+	password VARCHAR2(17) NOT NULL,
+    user_type CHAR(1) NOT NULL);'''
 
 create_auto_insurance_table_query='''CREATE TABLE auto_insurance (
     policy_id  NUMBER(12) NOT NULL,
@@ -115,6 +116,16 @@ all_queries = [create_user_table_query, create_auto_insurance_table_query, creat
                create_table_driver_query, create_table_home_query, create_table_home_insurance_query, create_table_insurance_query, \
                create_table_invoice_query, create_table_payment_query,create_table_vehicle_query, create_table_vehcile_driver_query, \
                ]
+
+
+users = """INSERT INTO users VALUES (1,'RossBennett@gmail.com','12345','C');
+INSERT INTO users VALUES (2,'JoCastillo@gmail.com','12345','C');
+INSERT INTO users VALUES (3,'WendyKelly@gmail.com','12345','C');
+INSERT INTO users VALUES (4,'SheilaRobinson@gmail.com','12345','C');
+INSERT INTO users VALUES (5,'RonnieCaldwell@gmail.com','12345','C');
+INSERT INTO users VALUES (100,'NikoAdmin@gmail.com','12345','E');
+INSERT INTO users VALUES (200,'JashAdmin@gmail.com','12345','E');
+INSERT INTO users VALUES (300, 'BarghavAdmin@gmail.com','12345','E');"""
 
 cust ="""INSERT INTO CUST VALUES (1,'Ross','Bennett','872 Learn st','Williamsport',17701,'M','S','A');
 INSERT INTO CUST VALUES (2,'Jo','Castillo','7933 Mcclellan Rd','Champaign',61821,'F','W','A');
@@ -511,6 +522,7 @@ INSERT INTO PAYMENT VALUES (5390006615, 9786892223, date(1962-03-10), 'Credit', 
 for query in all_queries:
     cursor.execute(query)
 
+run_array_of_instructions(users)
 run_array_of_instructions(cust)
 run_array_of_instructions(insurance)
 run_array_of_instructions(cust_insurance)
