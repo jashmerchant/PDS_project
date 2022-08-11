@@ -48,6 +48,28 @@
         </div>
     </nav>
 
+    <form action="action_page.php" method="post">
+
+        <div>
+            <label>Username</label>
+            <input type="text" placeholder="Enter Username" name="uname" required>
+        </div>
+        <div>
+            <label>Password</label>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+        </div>
+        <div>
+            <button type="submit">Login</button>
+            <button type="button" class="cancelbtn">Cancel</button>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" checked="checked" name="remember"> Remember me |
+            </label>
+            <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+    </form>
     <!-- Bootstrap scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
@@ -55,6 +77,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
         integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
         crossorigin="anonymous"></script>
+
+
 
 </body>
 
