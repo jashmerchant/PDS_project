@@ -5,7 +5,7 @@ dataBasePath = "database.db"
 def run_array_of_instructions(s):
     g = s.replace("\n","").split(";")
     for l in g:
-        #print(l)
+        print(l)
         cursor.execute(l+";")
 
 connection = sqlite3.connect(dataBasePath)
@@ -519,18 +519,23 @@ INSERT INTO PAYMENT VALUES (4404301614, 4340221202, date(1962-03-10), 'Debit', 7
 INSERT INTO PAYMENT VALUES (5390006615, 9786892223, date(1962-03-10), 'Credit', 80.46);
 """
 
-for query in all_queries:
-    cursor.execute(query)
+if "__name__" == "__main__":
+    for query in all_queries:
+        cursor.execute(query)
 
-run_array_of_instructions(users)
-run_array_of_instructions(cust)
-run_array_of_instructions(insurance)
-run_array_of_instructions(cust_insurance)
-run_array_of_instructions(driver)
-run_array_of_instructions(auto_insurance)
-run_array_of_instructions(home_data)
-run_array_of_instructions(home_insurance)
-run_array_of_instructions(invoice_data)
-run_array_of_instructions(payment)
-run_array_of_instructions(vehicles)
-run_array_of_instructions(vehicle_driver)
+    run_array_of_instructions(users)
+    run_array_of_instructions(cust)
+    run_array_of_instructions(insurance)
+    run_array_of_instructions(cust_insurance)
+    run_array_of_instructions(driver)
+    run_array_of_instructions(auto_insurance)
+    run_array_of_instructions(home_data)
+    run_array_of_instructions(home_insurance)
+    run_array_of_instructions(invoice_data)
+    run_array_of_instructions(payment)
+    run_array_of_instructions(vehicles)
+    run_array_of_instructions(vehicle_driver)
+
+    connection.commit()
+    cursor.close()
+    connection.close()
