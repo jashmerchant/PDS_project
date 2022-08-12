@@ -1,6 +1,10 @@
 import sqlite3
-
+import re
 dataBasePath = "database.db"
+
+# regex expressions for validations
+email_reg = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+password_reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
 
 def login(username, password):
     access = "denied"
@@ -20,6 +24,7 @@ class Users:
     def __init__(self):
         self.cust_id = 6
         self.emp_id = 100
+
     def register(self, username, password, cust_type):
         if not re.fullmatch(email_reg, username):
             return False
