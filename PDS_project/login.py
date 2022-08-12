@@ -16,21 +16,6 @@ def login(username, password):
     cursor = connection.cursor()
     cursor.execute(login_query)
 
-def register(username, password):
-    if not re.fullmatch(email_reg, username):
-        return False
-    pat = re.compile(password_reg)
-    # searching regex
-    mat = re.search(pat, password)
-    if not mat:
-        return False
-    register_query = f"""INSERT INTO “users” VALUES ({username},{password}); """
-    connection = sqlite3.connect(dataBasePath)
-    cursor = connection.cursor()
-    cursor.execute(register_query)
-    return True
-
-
 
 class Users:
     def __init__(self):
@@ -50,10 +35,13 @@ class Users:
         else:
             user_id = self.emp_id
             self.emp_id += 100
-        register_query = f"""INSERT INTO “users” VALUES ({user_id},{username},{password}, {cust_type}); """
+        register_query = f"""INSERT INTO users VALUES ({user_id},\"{username}\",\"{password}\", \"{cust_type}\"); """
+        print(register_query)
         connection = sqlite3.connect(dataBasePath)
+
         cursor = connection.cursor()
         cursor.execute(register_query)
+        connection.commit()
         return True
 
 
