@@ -15,16 +15,39 @@ def login(username, password):
     connection.close()
     return access
 
-def register(username, password):
-    connection = sqlite3.connect(dataBasePath)
-    cursor = connection.cursor()
-    existing_email = cursor.execute("SELECT email FROM users WHERE email="+"\'"+username+"\';").fetchone()
-    if (existing_email):
-        return False
-    _id = max(cursor.execute("""SELECT uid from users;""").fetchall())[0]+1
-    register_query = "INSERT INTO users VALUES ("+str(_id)+",\'"+username+"\',\'"+password+"\', +'C'); "
-    cursor.execute(register_query)
-    connection.commit()
-    cursor.close()
-    connection.close()
-    return True
+
+class Users:
+    def __init__(self):
+        self.cust_id = 6
+        self.emp_id = 100
+    def register(self, username, password, cust_type):
+        if not re.fullmatch(email_reg, username):
+            return False
+        pat = re.compile(password_reg)
+        # searching regex
+        mat = re.search(pat, password)
+        if not mat:
+            return False
+        if cust_type == 'C':
+            user_id = self.cust_id
+            self.cust_id += 1
+        else:
+            user_id = self.emp_id
+            self.emp_id += 100
+        register_query = f"""INSERT INTO users VALUES ({user_id},\"{username}\",\"{password}\", \"{cust_type}\"); """
+        print(register_query)
+        connection = sqlite3.connect(dataBasePath)
+
+        cursor = connection.cursor()
+        cursor.execute(register_query)
+        connection.commit()
+        return True
+
+
+username, password = "abc@gmail.com", "Bhargav@56223"
+
+
+
+users = Users()
+
+print(users.register(username, password, 'C'))

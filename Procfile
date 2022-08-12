@@ -1,1 +1,1 @@
-web: gunicorn --chdir PDS_project helloworld:app
+web: gunicorn --chdir PDS_project app:app
