@@ -18,7 +18,8 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow p-3">
         <div class="container">
-            <a class="navbar-brand" href="/"><i class="fa-solid fa-hands-holding-circle"></i> WDS</a>
+            <a class="navbar-brand" href="{{ url_for('home') }}"><i class="fa-solid fa-hands-holding-circle"></i>
+                WDS</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -44,6 +45,10 @@
                         </ul>
                     </li>
                 </ul>
+                <div class="text-end">
+                    <a class="btn btn-outline-light me-2" href="{{ url_for('login') }}" role="button">Login</a>
+                    <a class="btn btn-warning" href="{{ url_for('register') }}" role="button">Sign-up</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -84,6 +89,25 @@
             </div>
         </div>
     </section>
+
+    <!-- Eye toggler -->
+    <script>
+        var state = false;
+        function toggle() {
+            eye_icon = document.getElementById("eye");
+            if (state) {
+                document.getElementById("password").setAttribute("type", "password");
+                eye_icon.classList.remove("fa-eye");
+                eye_icon.classList.add("fa-eye-slash");
+                state = false;
+            } else {
+                document.getElementById("password").setAttribute("type", "text");
+                eye_icon.classList.remove("fa-eye-slash");
+                eye_icon.classList.add("fa-eye");
+                state = true;
+            }
+        }
+    </script>
     <!-- Bootstrap scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
