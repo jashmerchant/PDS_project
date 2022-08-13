@@ -1,7 +1,7 @@
 # ***************************************
 # =============== IMPORTS ===============
 # ***************************************
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -22,6 +22,7 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+login_manager.login_message_category = "error"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -108,6 +109,7 @@ def register():
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
+        flash("Account successfully created!", "success")
         return redirect(url_for('login'))
 
     return render_template("register.html", form=form)
