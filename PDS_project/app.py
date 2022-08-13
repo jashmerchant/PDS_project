@@ -3,7 +3,7 @@
 # ***************************************
 from flask import Flask, render_template, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
@@ -111,6 +111,15 @@ def register():
         return redirect(url_for('login'))
 
     return render_template("register.html", form=form)
+
+@app.route("/admin")
+@login_required
+def admin():
+    username = current_user.username
+    if username == "admin":
+        return render_template("admin.html")
+    else:
+        return redirect(url_for('home'))
 
 if __name__ == "__main__":
     app.run(debug=True)
