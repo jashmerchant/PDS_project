@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user;
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, EmailField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 
@@ -24,10 +24,12 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
+    email = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(80), nullable=False)
 
 class RegistrationForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Username"})
+    email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
     submit = SubmitField("Register")
 
@@ -36,7 +38,7 @@ class RegistrationForm(FlaskForm):
         # Try to look through db to find a similar username
         existing_user_username = User.query.filter_by(
             username=username.data).first()
-        # If it founds a similar username in db it'll raise a validation error thus guaranteeing unique username
+        # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
         if existing_user_username:
             raise ValidationError(
                 'That username already exists. Please choose a different one.')
@@ -81,7 +83,7 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
+        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
