@@ -16,6 +16,7 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow p-3">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}"><i class="fa-solid fa-hands-holding-circle"></i>
@@ -68,16 +69,12 @@
                         <!-- Username -->
                         <div class="form-outline mb-4">
                             <label class="form-label" for="email">Username</label>
-                            <!-- <input type="email" placeholder="Enter Email" name="email" id="email"
-                                class="form-control form-control" required /> -->
                             {{ form.username(class="form-control form-control") }}
                         </div>
 
                         <!-- Password -->
                         <label class="form-label" for="password">Password</label>
                         <div class="input-group form-outline mb-4">
-                            <!-- <input type="password" placeholder="Enter Password" name="password" id="password"
-                                class="form-control form-control" required /> -->
                             {{ form.password(class="form-control form-control") }}
                             <button class="btn btn-outline-primary" type="button" onclick="toggle()">
                                 <i class="fa-solid fa-eye-slash" id="eye"></i>
@@ -85,10 +82,9 @@
                         </div>
                         <!-- Submit button -->
                         {{ form.submit(class="btn btn-primary mb-4") }}
-                        <!-- <button type="submit" class="btn btn-primary mb-4">Login</button> -->
                     </form>
 
-                    <a href="#">Forgot password?</a>
+                    <a href="{{ url_for('forgot_password') }}">Forgot password?</a>
                     <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
                 </div>
             </div>
