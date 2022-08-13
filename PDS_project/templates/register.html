@@ -9,7 +9,7 @@
     <!-- Bootstrap CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-    <title>Register</title>
+    <title>Register | WDS</title>
 
     <!-- Fontawesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
@@ -19,7 +19,7 @@
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow p-3">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}"><i class="fa-solid fa-hands-holding-circle"></i>
-                WDS</a>
+                We Do Secure</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -63,7 +63,10 @@
                 <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
                     <h1 class="mb-4"><strong>Create an account</strong></h1>
                     <form action="" method="post">
-                        <div class="row">
+                        {{ form.hidden_tag() }}
+
+                        <!-- First & Last Name -->
+                        <!-- <div class="row">
                             <div class="col-md-6 mb-4">
                                 <div class="form-outline">
                                     <input type="text" placeholder="First Name" id="first_name" name="first_name"
@@ -76,13 +79,16 @@
                                         class="form-control form-control" required />
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
+
                         <!-- Email -->
                         <div class="form-outline mb-3">
-                            <input type="email" placeholder="Enter Email" id="email" name="email"
-                                class="form-control form-control" />
-                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                            {{ form.username(class="form-control form-control") }}
+                            <!-- <input type="email" placeholder="Enter Email" id="email" name="email"
+                                class="form-control form-control" /> -->
+                            <div id="emailHelp" class="form-text">Choose a unique username</div>
                         </div>
+
                         <!-- Gender -->
                         <!-- <div class="form-outline mb-3">
                             <div class="form-check form-check-inline">
@@ -105,29 +111,32 @@
                                 <label class="form-check-label" for="inlineRadio4">I don't wish to answer</label>
                             </div>
                         </div> -->
+
                         <!-- Password -->
                         <div class="input-group form-outline mb-4">
-                            <input type="password" placeholder="Enter Password"
+                            <!-- <input type="password" placeholder="Enter Password"
                                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" id="password1" name="password1"
-                                class="form-control form-control" required />
+                                class="form-control form-control" required /> -->
+                            {{ form.password(class="form-control form-control") }}
                             <button class="btn btn-outline-primary" type="button" onclick="toggle1()">
                                 <i class="fa-solid fa-eye-slash" id="eye1"></i>
                             </button>
+                            <div id="passwordHelpBlock" class="form-text">
+                                {# Try it out: https://regex101.com/r/yW4aZ3/171 #}
+                                Your password must be 4-20 characters long, contain uppercase and lowercase letters,
+                                symbols
+                                and numbers.
+                            </div>
                         </div>
-                        <div class="input-group form-outline mb-3">
+                        <!-- <div class="input-group form-outline mb-3">
                             <input type="password" placeholder="Re-type Password"
                                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,20}$" id="password2"
                                 name="password2" class="form-control form-control" required />
                             <button class="btn btn-outline-primary" type="button" onclick="toggle2()">
                                 <i class="fa-solid fa-eye-slash" id="eye2"></i>
                             </button>
-                        </div>
-                        <div id="passwordHelpBlock" class="form-text">
-                            {# Try it out: https://regex101.com/r/yW4aZ3/171 #}
-                            Your password must be 8-20 characters long, contain uppercase and lowercase letters, symbols
-                            and numbers.
-                        </div>
-                        <br>
+                        </div> -->
+
                         <!-- Submit button -->
                         <button type="submit" class="btn btn-warning mb-3">Register</button>
                     </form>
