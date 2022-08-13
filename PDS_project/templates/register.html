@@ -80,8 +80,8 @@
                         <!-- Password -->
                         <div class="input-group form-outline mb-4">
                             {{ form.password(class="form-control form-control") }}
-                            <button class="btn btn-outline-primary" type="button" onclick="toggle1()">
-                                <i class="fa-solid fa-eye-slash" id="eye1"></i>
+                            <button class="btn btn-outline-primary" type="button" onclick="toggle()">
+                                <i class="fa-solid fa-eye-slash" id="eye"></i>
                             </button>
                             <div id="passwordHelpBlock" class="form-text">
                                 Your password must be 4-20 characters long, contain uppercase and lowercase letters,
@@ -100,36 +100,19 @@
 
     <!-- Eye toggler -->
     <script>
-        var state1 = false;
-        var state2 = false;
-
-        function toggle1() {
-            let eye_icon = document.getElementById("eye1");
-            if (state1) {
-                document.getElementById("password1").setAttribute("type", "password");
+        var state = false;
+        function toggle() {
+            eye_icon = document.getElementById("eye");
+            if (state) {
+                document.getElementById("password").setAttribute("type", "password");
                 eye_icon.classList.remove("fa-eye");
                 eye_icon.classList.add("fa-eye-slash");
-                state1 = false;
+                state = false;
             } else {
-                document.getElementById("password1").setAttribute("type", "text");
+                document.getElementById("password").setAttribute("type", "text");
                 eye_icon.classList.remove("fa-eye-slash");
                 eye_icon.classList.add("fa-eye");
-                state1 = true;
-            }
-        }
-
-        function toggle2() {
-            let eye_icon = document.getElementById("eye2");
-            if (state2) {
-                document.getElementById("password2").setAttribute("type", "password");
-                eye_icon.classList.remove("fa-eye");
-                eye_icon.classList.add("fa-eye-slash");
-                state2 = false;
-            } else {
-                document.getElementById("password2").setAttribute("type", "text");
-                eye_icon.classList.remove("fa-eye-slash");
-                eye_icon.classList.add("fa-eye");
-                state2 = true;
+                state = true;
             }
         }
     </script>
