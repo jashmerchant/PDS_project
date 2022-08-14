@@ -29,31 +29,63 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
+                        <a class="nav-link" href="#">My Policies</a>
                     </li>
                 </ul>
                 <div class="text-end">
                     <!-- <a class="btn btn-outline-light me-2" href="{{ url_for('login') }}" role="button">Login</a> -->
-                    <a class="btn btn-light me-2" href="{{ url_for('logout') }}" role="button">Logout</a>
+                    <a class="btn btn-light me-2" href="{{ url_for('logout') }}" role="button"><i
+                            class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
                     <!-- <a class="btn btn-warning" href="{{ url_for('register') }}" role="button">Sign-up</a> -->
                 </div>
             </div>
         </div>
     </nav>
+
+    <div class="col-lg-8 mx-auto p-3 py-md-5">
+        <main>
+            <h1>Get insured today</h1>
+            <p class="fs-5 col-md-8">Quickly and easily get started with WDS's home and auto insurance policies.
+            </p>
+
+            <div class="mb-5">
+                <a href="#" class="btn btn-warning btn-lg px-3"><i class="fa-solid fa-car"></i> Auto
+                    Insurance</a>
+                <a href="#" class="btn btn-primary btn-lg px-3 mx-3"><i class="fa-solid fa-house-user"></i>
+                    Home Insurance</a>
+            </div>
+
+            <hr class="col-3 col-md-2 mb-5">
+
+            <div class="row g-5">
+                <div class="col-md-6">
+                    <h2>We're here to help</h2>
+                    <p>Our licensed insurance agents are available to answer all your questions.
+                        Just schedule a call, email or text us.</p>
+                    <ul class="icon-list ps-0">
+                        <li class="d-flex align-items-start mb-1"><a
+                                href="https://github.com/twbs/bootstrap-npm-starter" rel="noopener"
+                                target="_blank">contact@wds.com</a></li>
+                        <li class="text-muted d-flex align-items-start mb-1">561 288 9700
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-6">
+                    <h2>Why us?</h2>
+                    <p>Read more detailed instructions and documentation on using or contributing to Bootstrap.</p>
+                    <ul class="icon-list ps-0">
+                        <li class="d-flex align-items-start mb-1"><strong>Hassle free
+                                insurance</strong></li>
+                        <li class="d-flex align-items-start mb-1"><strong>Best price guaranteed</strong></li>
+                        <li class="d-flex align-items-start mb-1"><strong>Unique technology</strong></li>
+                        <li class="d-flex align-items-start mb-1"><strong>24*7 customer service</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
 
     <!-- Bootstrap scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"

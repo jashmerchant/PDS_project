@@ -55,6 +55,7 @@ class RegistrationForm(FlaskForm):
             username=username.data).first()
         # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
         if existing_user_username:
+            flash("That username already exists. Please choose a different one.", "error")
             raise ValidationError(
                 'That username already exists. Please choose a different one.')
 
@@ -81,14 +82,24 @@ def home():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('home'))
+    # if form.validate_on_submit():
+    #     user = User.query.filter_by(username=form.username.data).first()
+    #     if user:
+    #         if bcrypt.check_password_hash(user.password, form.password.data):
+    #             login_user(user)
+    #             return redirect(url_for('home'))
+    if not form.validate_on_submit():
+        return render_template("login.html", form=form)
+    user = User.query.filter_by(username=form.username.data).first()
+    if not user:
+        flash("Username doesn't exist", "error")
+        return render_template("login.html", form=form)
+    if not bcrypt.check_password_hash(user.password, form.password.data):
+        flash("Wrong password", "error")
+        return render_template("login.html", form=form)
+    login_user(user)
+    return redirect(url_for('home'))
 
-    return render_template("login.html", form=form)
 
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required
