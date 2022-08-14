@@ -38,6 +38,85 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(80), nullable=False)
 
+class Driver(db.Model, UserMixin):
+    dln = db.Column(db.Integer, primary_key=True)
+    state = db.Column(db.String(20), primary_key=True)
+    first_name = db.Column(db.String(30), nullable=False)
+    last_name = db.Column(db.String(30), nullable=False)
+    dob = db.Column(db.Date(), nullable=False)
+
+class Vehicle(db.Model, UserMixin):
+    vin = db.Column(db.Integer, primary_key=True)
+    make = db.Column(db.String(30), nullable=False)
+    model = db.Column(db.String(30), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(1), nullable=False)
+
+class VehicleDriver(db.Model, UserMixin):
+    vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
+    dln = db.Column(db.Integer, db.ForeignKey(Driver.dln), primary_key=True)
+    state = db.Column(db.String(20), db.ForeignKey(Driver.state), primary_key=True)
+
+class Customer(db.Model, UserMixin):
+    cid = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(30), nullable=False)
+    last_name = db.Column(db.String(30), nullable=False)
+    street = db.Column(db.String(30), nullable=False)
+    city = db.Column(db.String(30), nullable=False)
+    zipcode = db.Column(db.Integer, nullable=False)
+    gender = db.Column(db.String(30), nullable=True)
+    marital_status = db.Column(db.String(1), nullable=False)
+
+class Insurance(db.Model, UserMixin):
+    policy_id = db.Column(db.Integer, primary_key=True)
+    policy_type = db.Column(db.String(1), nullable=False)
+
+class Invoice(db.Model, UserMixin):
+    inv_num = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer, nullable=False)
+    due_date = db.Column(db.Date(), nullable=False)
+    policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), nullable=False)
+
+class Payment(db.Model, UserMixin):
+    transaction_id = db.Column(db.Integer, primary_key=True)
+    inv_num = db.Column(db.Integer, db.ForeignKey(Invoice.inv_num), primary_key=True)
+    payment_date = db.Column(db.Date(), nullable=False)
+    method = db.Column(db.String(6), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+
+class Home(db.Model, UserMixin):
+    hid = db.Column(db.Integer, primary_key=True)
+    purchase_date = db.Column(db.Date(), nullable=False)
+    purchase_value = db.Column(db.Integer, nullable=False)
+    area = db.Column(db.Integer, nullable=False)
+    home_type = db.Column(db.String(1), nullable=False)
+    aff = db.Column(db.Integer, nullable=False)
+    hss = db.Column(db.Integer, nullable=False)
+    sp = db.Column(db.String(1), nullable=True)
+    basement = db.Column(db.String(1), nullable=False)
+    street = db.Column(db.String(30), nullable=False)
+    city = db.Column(db.String(30), nullable=False)
+    zipcode = db.Column(db.Integer, nullable=False)
+
+class HomeInsurance(db.Model, UserMixin):
+    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
+    start_date = db.Column(db.Date(), nullable=False)
+    end_date = db.Column(db.Date(), nullable=False)
+    premium = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(1), nullable=False)
+
+class AutoInsurance(db.Model, UserMixin):
+    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
+    start_date = db.Column(db.Date(), nullable=False)
+    end_date = db.Column(db.Date(), nullable=False)
+    premium = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(1), nullable=False)
+
+class CustomerInsurnace(db.Model, UserMixin):
+ cid = db.Column(db.Integer, db.ForeignKey(Customer.cid), primary_key=True)
+ policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
 
 # ***************************************
 # ================ FORMS ================
