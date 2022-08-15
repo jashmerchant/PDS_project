@@ -3,6 +3,7 @@
 # ***************************************
 from flask import Flask, render_template, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_table import Table, col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, SubmitField
@@ -114,7 +115,7 @@ class AutoInsurance(db.Model, UserMixin):
     premium = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(1), nullable=False)
 
-class CustomerInsurnace(db.Model, UserMixin):
+class CustomerInsurance(db.Model, UserMixin):
  cid = db.Column(db.Integer, db.ForeignKey(Customer.cid), primary_key=True)
  policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
 
@@ -147,6 +148,9 @@ class ForgotPassword(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     submit = SubmitField("Login")
 
+class CustomerHomeInsurancesTable(Table):
+    ### TODO ###
+
 
 
 # ***************************************
@@ -156,7 +160,18 @@ class ForgotPassword(FlaskForm):
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
+    home_insurances = Insurance.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
+        .filter_by(CustomerInsurance.cid == current_user.cid)
+
+    auto_insurances = Insurance.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id ) \
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
+        .filter_by(CustomerInsurance.cid == current_user.cid)
+
+    home_table = Table(home_insurances)
+    auto_table = Table(auto_insurances)
+
+    return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
