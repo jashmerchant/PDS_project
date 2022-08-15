@@ -148,6 +148,13 @@ class ForgotPassword(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     submit = SubmitField("Login")
 
+class CustomerInsurancesTable(Table):
+    policy_id = Col('Policy Number')
+    start_date = Col('Start Date')
+    end_date = Col('End Date')
+    premium = Col('Premium')
+    status = Col('Status')
+
 class CustomerForm(FlaskForm):
     cust_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter customer id"})
     fname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter First Name"})
@@ -223,20 +230,21 @@ class CustomerInsurancesTable(Table):
 @app.route("/home")
 @login_required
 def home():
-    home_insurances = Insurance.query.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
+    home_insurances = HomeInsurance.query.join(Insurance, HomeInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
         .filter(CustomerInsurance.cid == current_user.id).all()\
         #.load_only(HomeInsurance.policy_id, HomeInsurance.start_date, HomeInsurance.end_date, HomeInsurance.premium)\
         #.all()
 
-    auto_insurances = Insurance.query.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id )\
+    auto_insurances = AutoInsurance.query.join(Insurance, AutoInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
         .filter(CustomerInsurance.cid == current_user.id).all() \
         #.load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
         #.all()
 
-    home_table = Table(home_insurances)
-    auto_table = Table(auto_insurances)
+    print(home_insurances)
+    home_table = CustomerInsurancesTable(home_insurances)
+    auto_table = CustomerInsurancesTable(auto_insurances)
 
     return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
