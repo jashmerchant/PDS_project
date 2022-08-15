@@ -200,7 +200,7 @@ def home():
 
     print(home_insurances)
     home_table = CustomerInsurancesTable(home_insurances)
-    auto_table = Table(auto_insurances)
+    auto_table = CustomerInsurancesTable(auto_insurances)
 
     return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
