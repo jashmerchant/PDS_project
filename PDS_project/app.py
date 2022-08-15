@@ -3,7 +3,7 @@
 # ***************************************
 from flask import Flask, render_template, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_table import Table, col
+from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, SubmitField
@@ -108,7 +108,7 @@ class HomeInsurance(db.Model, UserMixin):
     status = db.Column(db.String(1), nullable=False)
 
 class AutoInsurance(db.Model, UserMixin):
-    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    policy_id = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
     vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
     start_date = db.Column(db.Date(), nullable=False)
     end_date = db.Column(db.Date(), nullable=False)
@@ -149,10 +149,10 @@ class ForgotPassword(FlaskForm):
     submit = SubmitField("Login")
 
 class CustomerInsurancesTable(Table):
-    policy_id = col('Policy Number')
-    start_date = col('Start Date')
-    end_date = col('End Date')
-    premium = col('Premium')
+    policy_id = Col('Policy Number')
+    start_date = Col('Start Date')
+    end_date = Col('End Date')
+    premium = Col('Premium')
 
 
 
@@ -163,20 +163,20 @@ class CustomerInsurancesTable(Table):
 @app.route("/home")
 @login_required
 def home():
-    home_insurances = Insurance.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
+    home_insurances = Insurance.query.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
-        .filter_by(CustomerInsurance.cid == current_user.cid)\
-        .load_only(HomeInsurance.policy_id, HomeInsurance.start_date, HomeInsurance.end_date, HomeInsurance.premium)\
-        .all()
+        .filter(CustomerInsurance.cid == current_user.id).all()\
+        #.load_only(HomeInsurance.policy_id, HomeInsurance.start_date, HomeInsurance.end_date, HomeInsurance.premium)\
+        #.all()
 
-    auto_insurances = Insurance.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id )\
+    auto_insurances = Insurance.query.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
-        .filter_by(CustomerInsurance.cid == current_user.cid) \
-        .load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
-        .all()
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+        #.load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
+        #.all()
 
-    home_table = CustomerInsurancesTable(home_insurances)
-    auto_table = CustomerInsurancesTable(auto_insurances)
+    home_table = Table(home_insurances)
+    auto_table = Table(auto_insurances)
 
     return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
