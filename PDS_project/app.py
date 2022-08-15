@@ -3,9 +3,10 @@
 # ***************************************
 from flask import Flask, render_template, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField, SubmitField
+from wtforms import IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 
@@ -107,14 +108,14 @@ class HomeInsurance(db.Model, UserMixin):
     status = db.Column(db.String(1), nullable=False)
 
 class AutoInsurance(db.Model, UserMixin):
-    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    policy_id = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
     vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
     start_date = db.Column(db.Date(), nullable=False)
     end_date = db.Column(db.Date(), nullable=False)
     premium = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(1), nullable=False)
 
-class CustomerInsurnace(db.Model, UserMixin):
+class CustomerInsurance(db.Model, UserMixin):
  cid = db.Column(db.Integer, db.ForeignKey(Customer.cid), primary_key=True)
  policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
 
@@ -147,7 +148,35 @@ class ForgotPassword(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     submit = SubmitField("Login")
 
+class CustomerInsurancesTable(Table):
+    policy_id = Col('Policy Number')
+    start_date = Col('Start Date')
+    end_date = Col('End Date')
+    premium = Col('Premium')
 
+
+class CustomerForm(FlaskForm):
+    cust_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter customer id"})
+    fname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter First Name"})
+    lname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Last Name"})
+    street = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Address"})
+    city = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter City"})
+    zipcode = IntegerField(validators=[InputRequired(), Length(5)], render_kw={"placeholder": "Enter Zip code"})
+    gender = RadioField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
+    married_status = RadioField('Marital Status', choices=[('M', 'Married'), ('S', 'Single'), ('W', 'Widow')])
+    #cust type field is not decalred. As discussed we assume that the person is the customer
+    submit = SubmitField("Register")
+
+    # Validate if username is unique
+    def validate_username(self, username):
+        # Try to look through db to find a similar username
+        existing_cust_id = User.query.filter_by(
+            username=cust_id.data).first()
+        # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
+        if existing_cust_id:
+            flash("That username already exists. Please choose a different one.", "error")
+            raise ValidationError(
+                'That username already exists. Please choose a different one.')
 
 # ***************************************
 # ================ ROUTES ===============
@@ -156,7 +185,22 @@ class ForgotPassword(FlaskForm):
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
+    home_insurances = Insurance.query.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
+        .filter(CustomerInsurance.cid == current_user.id).all()\
+        #.load_only(HomeInsurance.policy_id, HomeInsurance.start_date, HomeInsurance.end_date, HomeInsurance.premium)\
+        #.all()
+
+    auto_insurances = Insurance.query.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id )\
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+        #.load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
+        #.all()
+
+    home_table = Table(home_insurances)
+    auto_table = Table(auto_insurances)
+
+    return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -178,6 +222,7 @@ def login():
         return render_template("login.html", form=form)
     login_user(user)
     return redirect(url_for('home'))
+
 
 
 @app.route("/logout", methods=['GET', 'POST'])
@@ -212,6 +257,10 @@ def admin():
         return render_template("admin.html")
     else:
         return redirect(url_for('home'))
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
