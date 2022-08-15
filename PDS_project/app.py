@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField
+from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 
@@ -155,7 +155,6 @@ class CustomerInsurancesTable(Table):
     premium = Col('Premium')
     status = Col('Status')
 
-
 class CustomerForm(FlaskForm):
     cust_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter customer id"})
     fname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter First Name"})
@@ -168,16 +167,61 @@ class CustomerForm(FlaskForm):
     #cust type field is not decalred. As discussed we assume that the person is the customer
     submit = SubmitField("Register")
 
-    # Validate if username is unique
-    def validate_username(self, username):
-        # Try to look through db to find a similar username
-        existing_cust_id = User.query.filter_by(
-            username=cust_id.data).first()
-        # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
-        if existing_cust_id:
-            flash("That username already exists. Please choose a different one.", "error")
-            raise ValidationError(
-                'That username already exists. Please choose a different one.')
+class HomeForm(FlaskForm):
+    purchase_value = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
+    area = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Area"})
+    aff = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Auto Fire Notification"})
+    hss = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Home Security System"})
+    basement = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Basement"})
+    zipcode = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
+    city = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter City"})
+    purchase_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Date"})
+    street = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Address"})
+    home_type = RadioField('Home Type', choices=[('S', 'Single Family'), ('M', 'Multi Family'), ('C', 'Condominium', 'T', 'Town House')])
+    pool = RadioField('Swimming pool', choices=[('U', 'Underground Pool'), ('O', 'Overground Pool'), ('I', 'Indoor Pool', 'M', 'Multiple Pool')])
+    submit = SubmitField("Register")
+
+class VehicleForm(FlaskForm):
+    vehicle_id = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle ID number"})
+    make = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle make number"})
+    model = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle model"})
+    year = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Year of the vehicle purchased"})
+    status = RadioField('Swimming pool', choices=[('L', 'Leased'), ('O', 'Owned'), ('F', 'Financed')])
+
+class DriverForm(FlaskForm):
+    dln = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Driver license number"})
+    state = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter State"})
+    fname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter First Name"})
+    lname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Last Name"})
+    dob = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Date of Birth"})
+
+
+class HomeInsuranceForm(FlaskForm):
+    policy_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter policy id"})
+    h_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter home id"})
+    start_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Start Date"})
+    end_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter End Date"})
+    premium = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Premium Amount"})
+    status = RadioField('Home Type', choices=[('C', 'Current'), ('P', 'Expired')])
+
+class AutoInsuranceForm(FlaskForm):
+    policy_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter policy id"})
+    vehicle_id = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle ID number"})
+    start_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Start Date"})
+    end_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter End date"})
+    premium = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Premium Amount"})
+    status = RadioField('Home Type', choices=[('C', 'Current'), ('P', 'Expired')])
+
+class PaymentForm(FlaskForm):
+    # The actual table has couple of other fields but not sure if we need to take from the user or impute them with internal logic.
+    paym_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter payment date"})
+    method = RadioField('Payment Method', choices=[('PayPal'), ('Credit'), ('Debit'), ('Check')])
+
+class CustomerInsurancesTable(Table):
+    policy_id = Col('Policy Number')
+    start_date = Col('Start Date')
+    end_date = Col('End Date')
+    premium = Col('Premium')
 
 # ***************************************
 # ================ ROUTES ===============
@@ -207,12 +251,6 @@ def home():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    # if form.validate_on_submit():
-    #     user = User.query.filter_by(username=form.username.data).first()
-    #     if user:
-    #         if bcrypt.check_password_hash(user.password, form.password.data):
-    #             login_user(user)
-    #             return redirect(url_for('home'))
     if not form.validate_on_submit():
         return render_template("login.html", form=form)
     user = User.query.filter_by(username=form.username.data).first()
@@ -240,7 +278,7 @@ def forgot_password():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-
+    # Hashes password and stores in db on successful registration of a user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
