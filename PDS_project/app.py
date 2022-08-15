@@ -3,6 +3,7 @@
 # ***************************************
 from flask import Flask, render_template, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, SubmitField
@@ -38,6 +39,85 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(80), nullable=False)
 
+class Driver(db.Model, UserMixin):
+    dln = db.Column(db.Integer, primary_key=True)
+    state = db.Column(db.String(20), primary_key=True)
+    first_name = db.Column(db.String(30), nullable=False)
+    last_name = db.Column(db.String(30), nullable=False)
+    dob = db.Column(db.Date(), nullable=False)
+
+class Vehicle(db.Model, UserMixin):
+    vin = db.Column(db.Integer, primary_key=True)
+    make = db.Column(db.String(30), nullable=False)
+    model = db.Column(db.String(30), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(1), nullable=False)
+
+class VehicleDriver(db.Model, UserMixin):
+    vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
+    dln = db.Column(db.Integer, db.ForeignKey(Driver.dln), primary_key=True)
+    state = db.Column(db.String(20), db.ForeignKey(Driver.state), primary_key=True)
+
+class Customer(db.Model, UserMixin):
+    cid = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(30), nullable=False)
+    last_name = db.Column(db.String(30), nullable=False)
+    street = db.Column(db.String(30), nullable=False)
+    city = db.Column(db.String(30), nullable=False)
+    zipcode = db.Column(db.Integer, nullable=False)
+    gender = db.Column(db.String(30), nullable=True)
+    marital_status = db.Column(db.String(1), nullable=False)
+
+class Insurance(db.Model, UserMixin):
+    policy_id = db.Column(db.Integer, primary_key=True)
+    policy_type = db.Column(db.String(1), nullable=False)
+
+class Invoice(db.Model, UserMixin):
+    inv_num = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer, nullable=False)
+    due_date = db.Column(db.Date(), nullable=False)
+    policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), nullable=False)
+
+class Payment(db.Model, UserMixin):
+    transaction_id = db.Column(db.Integer, primary_key=True)
+    inv_num = db.Column(db.Integer, db.ForeignKey(Invoice.inv_num), primary_key=True)
+    payment_date = db.Column(db.Date(), nullable=False)
+    method = db.Column(db.String(6), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+
+class Home(db.Model, UserMixin):
+    hid = db.Column(db.Integer, primary_key=True)
+    purchase_date = db.Column(db.Date(), nullable=False)
+    purchase_value = db.Column(db.Integer, nullable=False)
+    area = db.Column(db.Integer, nullable=False)
+    home_type = db.Column(db.String(1), nullable=False)
+    aff = db.Column(db.Integer, nullable=False)
+    hss = db.Column(db.Integer, nullable=False)
+    sp = db.Column(db.String(1), nullable=True)
+    basement = db.Column(db.String(1), nullable=False)
+    street = db.Column(db.String(30), nullable=False)
+    city = db.Column(db.String(30), nullable=False)
+    zipcode = db.Column(db.Integer, nullable=False)
+
+class HomeInsurance(db.Model, UserMixin):
+    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
+    start_date = db.Column(db.Date(), nullable=False)
+    end_date = db.Column(db.Date(), nullable=False)
+    premium = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(1), nullable=False)
+
+class AutoInsurance(db.Model, UserMixin):
+    policy_id = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
+    start_date = db.Column(db.Date(), nullable=False)
+    end_date = db.Column(db.Date(), nullable=False)
+    premium = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(1), nullable=False)
+
+class CustomerInsurance(db.Model, UserMixin):
+ cid = db.Column(db.Integer, db.ForeignKey(Customer.cid), primary_key=True)
+ policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
 
 # ***************************************
 # ================ FORMS ================
@@ -67,6 +147,12 @@ class LoginForm(FlaskForm):
 class ForgotPassword(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     submit = SubmitField("Login")
+
+class CustomerInsurancesTable(Table):
+    policy_id = Col('Policy Number')
+    start_date = Col('Start Date')
+    end_date = Col('End Date')
+    premium = Col('Premium')
 
 
 class CustomerForm(FlaskForm):
@@ -99,7 +185,22 @@ class CustomerForm(FlaskForm):
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
+    home_insurances = Insurance.query.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
+        .filter(CustomerInsurance.cid == current_user.id).all()\
+        #.load_only(HomeInsurance.policy_id, HomeInsurance.start_date, HomeInsurance.end_date, HomeInsurance.premium)\
+        #.all()
+
+    auto_insurances = Insurance.query.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id )\
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+        #.load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
+        #.all()
+
+    home_table = Table(home_insurances)
+    auto_table = Table(auto_insurances)
+
+    return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
