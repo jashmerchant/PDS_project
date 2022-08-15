@@ -148,7 +148,7 @@ class ForgotPassword(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     submit = SubmitField("Login")
 
-class CustomerHomeInsurancesTable(Table):
+class CustomerInsurancesTable(Table):
     ### TODO ###
 
 
