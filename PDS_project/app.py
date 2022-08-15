@@ -69,6 +69,28 @@ class ForgotPassword(FlaskForm):
     submit = SubmitField("Login")
 
 
+class CustomerForm(FlaskForm):
+    cust_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter customer id"})
+    fname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter First Name"})
+    lname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Last Name"})
+    street = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Address"})
+    city = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter City"})
+    zipcode = IntegerField(validators=[InputRequired(), Length(5)], render_kw={"placeholder": "Enter Zip code"})
+    gender = RadioField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
+    married_status = RadioField('Marital Status', choices=[('M', 'Married'), ('S', 'Single'), ('W', 'Widow')])
+    #cust type field is not decalred. As discussed we assume that the person is the customer
+    submit = SubmitField("Register")
+
+    # Validate if username is unique
+    def validate_username(self, username):
+        # Try to look through db to find a similar username
+        existing_cust_id = User.query.filter_by(
+            username=cust_id.data).first()
+        # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
+        if existing_cust_id:
+            flash("That username already exists. Please choose a different one.", "error")
+            raise ValidationError(
+                'That username already exists. Please choose a different one.')
 
 # ***************************************
 # ================ ROUTES ===============
@@ -99,6 +121,7 @@ def login():
         return render_template("login.html", form=form)
     login_user(user)
     return redirect(url_for('home'))
+
 
 
 @app.route("/logout", methods=['GET', 'POST'])
@@ -133,6 +156,10 @@ def admin():
         return render_template("admin.html")
     else:
         return redirect(url_for('home'))
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
