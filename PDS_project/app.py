@@ -149,7 +149,10 @@ class ForgotPassword(FlaskForm):
     submit = SubmitField("Login")
 
 class CustomerInsurancesTable(Table):
-    ### TODO ###
+    policy_id = col('Policy Number')
+    start_date = col('Start Date')
+    end_date = col('End Date')
+    premium = col('Premium')
 
 
 
@@ -162,14 +165,18 @@ class CustomerInsurancesTable(Table):
 def home():
     home_insurances = Insurance.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
-        .filter_by(CustomerInsurance.cid == current_user.cid).all()
+        .filter_by(CustomerInsurance.cid == current_user.cid)\
+        .load_only(HomeInsurance.policy_id, HomeInsurance.start_date, HomeInsurance.end_date, HomeInsurance.premium)\
+        .all()
 
     auto_insurances = Insurance.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
-        .filter_by(CustomerInsurance.cid == current_user.cid).all()
+        .filter_by(CustomerInsurance.cid == current_user.cid) \
+        .load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
+        .all()
 
-    home_table = Table(home_insurances)
-    auto_table = Table(auto_insurances)
+    home_table = CustomerInsurancesTable(home_insurances)
+    auto_table = CustomerInsurancesTable(auto_insurances)
 
     return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
