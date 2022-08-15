@@ -162,11 +162,11 @@ class CustomerHomeInsurancesTable(Table):
 def home():
     home_insurances = Insurance.join(HomeInsurance, HomeInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
-        .filter_by(CustomerInsurance.cid == current_user.cid)
+        .filter_by(CustomerInsurance.cid == current_user.cid).all()
 
-    auto_insurances = Insurance.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id ) \
-        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
-        .filter_by(CustomerInsurance.cid == current_user.cid)
+    auto_insurances = Insurance.join(AutoInsurance, AutoInsurance.policy_id == Insurance.policy_id )\
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
+        .filter_by(CustomerInsurance.cid == current_user.cid).all()
 
     home_table = Table(home_insurances)
     auto_table = Table(auto_insurances)
