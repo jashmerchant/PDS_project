@@ -62,46 +62,124 @@
                         <div class="modal-content">
                             <div class="modal-header p-5 pb-4 border-bottom-0">
                                 <!-- <h5 class="modal-title">Modal title</h5> -->
-                                <h2 class="fw-bold mb-0">Sign up for free</h2>
+                                <h2 class="fw-bold mb-0">Home Insurance</h2>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-5 pt-0">
-                                <form class="">
+                                <form class="" method="POST">
                                     <div class="form-floating mb-3">
-                                        <input type="email" class="form-control rounded-3" id="floatingInput"
-                                            placeholder="name@example.com">
-                                        <label for="floatingInput">Email address</label>
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Purchase Value" required>
+                                        <label for="floatingInput">Purchase Value</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="password" class="form-control rounded-3" id="floatingPassword"
-                                            placeholder="Password">
-                                        <label for="floatingPassword">Password</label>
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Area (sq ft)" required>
+
+                                        <label for="floatingInput">Area (sq ft)</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingDate"
+                                            placeholder="Date" required>
+
+                                        <label for="floatingDate">Purchase Date</label>
+                                    </div>
+                                    <label for="floatingPassword">Auto Fire Notification</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="aff"
+                                                id="flexRadioDefault1" value="aff" required>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="aff"
+                                                id="flexRadioDefault2" value="noaff" required checked>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <label for="floatingPassword">Home Security System</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="hss"
+                                                id="flexRadioDefault1" value="hss" required>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="hss"
+                                                id="flexRadioDefault2" value="nohss" required checked>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <label for="floatingPassword">Basement</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="bs"
+                                                id="flexRadioDefault1" value="bs" required>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="bs"
+                                                id="flexRadioDefault2" value="nobs" checked required>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="floatingSelect"
+                                            aria-label="Floating label select example" required>
+                                            <option value="U">Underground swimming pool</option>
+                                            <option value="O">Overground swimming pool</option>
+                                            <option value="I">Indoor swimming pool</option>
+                                            <option value="M">Multiple swimming pool</option>
+                                            <option value="null">No swimming pool</option>
+                                        </select>
+                                        <label for="floatingSelect">Swimming Pool</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="floatingSelect"
+                                            aria-label="Floating label select example" required>
+                                            <option value="S">Single Family</option>
+                                            <option value="M">Multi Family</option>
+                                            <option value="C">Condominium</option>
+                                            <option value="T">Town House</option>
+                                        </select>
+                                        <label for="floatingSelect">Type of Home</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingText"
+                                            placeholder="Street" required>
+
+                                        <label for="floatingText">Street</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingZipcode"
+                                            placeholder="Zipcode" required>
+
+                                        <label for="floatingZipcode">Zipcode</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingCity"
+                                            placeholder="City" required>
+
+                                        <label for="floatingCity">City</label>
                                     </div>
                                     <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign
                                         up</button>
                                     <small class="text-muted">By clicking Sign up, you agree to the terms of
                                         use.</small>
-                                    <hr class="my-4">
-                                    <h2 class="fs-5 fw-bold mb-3">Or use a third-party</h2>
-                                    <button class="w-100 py-2 mb-2 btn btn-outline-dark rounded-3" type="submit">
-                                        <svg class="bi me-1" width="16" height="16">
-                                            <use xlink:href="#twitter" />
-                                        </svg>
-                                        Sign up with Twitter
-                                    </button>
-                                    <button class="w-100 py-2 mb-2 btn btn-outline-primary rounded-3" type="submit">
-                                        <svg class="bi me-1" width="16" height="16">
-                                            <use xlink:href="#facebook" />
-                                        </svg>
-                                        Sign up with Facebook
-                                    </button>
-                                    <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="submit">
-                                        <svg class="bi me-1" width="16" height="16">
-                                            <use xlink:href="#github" />
-                                        </svg>
-                                        Sign up with GitHub
-                                    </button>
+
                                 </form>
                             </div>
                             <!-- <div class="modal-footer">
@@ -132,7 +210,7 @@
 
                 <div class="col-md-6">
                     <h2>Why us?</h2>
-                    <p>Read more detailed instructions and documentation on using or contributing to Bootstrap.</p>
+                    <p>Given below are more points as to why you should choose WDS.</p>
                     <ul class="icon-list ps-0">
                         <li class="d-flex align-items-start mb-1"><strong>Hassle free
                                 insurance</strong></li>

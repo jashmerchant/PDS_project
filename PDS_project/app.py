@@ -1,6 +1,7 @@
 # ***************************************
 # =============== IMPORTS ===============
 # ***************************************
+import socket
 from flask import Flask, render_template, url_for, redirect, flash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_sqlalchemy import SQLAlchemy
@@ -195,19 +196,19 @@ class CustomerForm(FlaskForm):
     #cust type field is not decalred. As discussed we assume that the person is the customer
     submit = SubmitField("Register")
 
-class HomeForm(FlaskForm):
-    purchase_value = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
-    area = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Area"})
-    aff = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Auto Fire Notification"})
-    hss = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Home Security System"})
-    basement = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Basement"})
-    zipcode = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
-    city = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter City"})
-    purchase_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Date"})
-    street = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Address"})
-    home_type = RadioField('Home Type', choices=[('S', 'Single Family'), ('M', 'Multi Family'), ('C', 'Condominium', 'T', 'Town House')])
-    pool = RadioField('Swimming pool', choices=[('U', 'Underground Pool'), ('O', 'Overground Pool'), ('I', 'Indoor Pool', 'M', 'Multiple Pool')])
-    submit = SubmitField("Register")
+# class HomeForm(FlaskForm):
+#     purchase_value = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
+#     area = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Area"})
+#     aff = RadioField(validators=[InputRequired()])
+#     hss = RadioField(validators=[InputRequired()])
+#     basement = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Basement"})
+#     zipcode = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
+#     city = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter City"})
+#     purchase_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Date"})
+#     street = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Address"})
+#     home_type = RadioField('Home Type', choices=[('S', 'Single Family'), ('M', 'Multi Family'), ('C', 'Condominium', 'T', 'Town House')])
+#     pool = RadioField('Swimming pool', choices=[('U', 'Underground Pool'), ('O', 'Overground Pool'), ('I', 'Indoor Pool', 'M', 'Multiple Pool')])
+#     submit = SubmitField("Register")
 
 class VehicleForm(FlaskForm):
     vehicle_id = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle ID number"})
@@ -258,6 +259,7 @@ class CustomerInsurancesTable(Table):
 @app.route("/home")
 @login_required
 def home():
+    # form = HomeForm()
     home_insurances = HomeInsurance.query.join(Insurance, HomeInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
         .filter(CustomerInsurance.cid == current_user.id).all()\
