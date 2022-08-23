@@ -2,10 +2,12 @@
 # =============== IMPORTS ===============
 # ***************************************
 from flask import Flask, render_template, url_for, redirect, flash
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
+from flask_mail import Mail, Message
 from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
@@ -29,6 +31,14 @@ login_manager.login_message_category = "error"
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+app.config['MAIL_SERVER'] = 'smtp@gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'johndopehere@gmail.com' 
+app.config['MAIL_PASSWORD'] = 'Itshighnoon@71'
+
+mail=Mail(app)
+
 
 # ***************************************
 # =============== MODELS ================
@@ -38,6 +48,20 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     email = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(80), nullable=False)
+
+    def get_token(self, expires_sec=400):
+        serial = Serializer(app.config['SECRET_KEY'], expires_in=expires_sec)
+        return serial.dumps({'user_id': self.id}).decode('utf-8')
+    
+    @staticmethod
+    def verify_token(token):
+        serial = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = serial.loads(token)['user_id'] 
+        except:
+            return None
+        return User.query.get(user_id)
+
 
 class Driver(db.Model, UserMixin):
     dln = db.Column(db.Integer, primary_key=True)
@@ -146,7 +170,12 @@ class LoginForm(FlaskForm):
 
 class ForgotPassword(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
-    submit = SubmitField("Login")
+    submit = SubmitField("Send")
+
+class ResetPassword(FlaskForm):
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
+    confirm_password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Confirm Password"})
+    submit = SubmitField("Submit")
 
 class CustomerInsurancesTable(Table):
     policy_id = Col('Policy Number')
@@ -242,7 +271,7 @@ def home():
         #.load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
         #.all()
 
-    print(home_insurances)
+    # print(home_insurances)
     home_table = CustomerInsurancesTable(home_insurances)
     auto_table = CustomerInsurancesTable(auto_insurances)
 
@@ -271,9 +300,41 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+def send_mail(user):
+    token = user.get_token()
+    msg = Message('Password Reset Request', recipients=[user.email], sender='johndopehere@gmail.com')
+    msg.body = f''' To reset password. 
+        {url_for('reset_token', token=token, _external=True)}
+    '''
+    mail.send(msg)
+
 @app.route("/forgotpassword", methods=['GET', 'POST'])
 def forgot_password():
-    return render_template("forgot_password.html")
+    form = ForgotPassword()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_mail(user)
+            print(user)
+            flash("Password reset link sent", "success")
+            return redirect(url_for('login'))
+    return render_template("forgot_password.html", form=form)
+
+@app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    user = User.verify_token(token)
+    if user is None:
+        flash("Warning", "success")
+        return redirect(url_for('forgot_password'))
+    
+    form = ResetPassword()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password=hashed_password
+        db.session.commit()
+        flash("Password Change Successful", "success")
+        return redirect(url_for('login'))
+    return render_template("reset_password.html", form=form)
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -295,6 +356,25 @@ def admin():
     username = current_user.username
     if username == "admin":
         return render_template("admin.html")
+    else:
+        return redirect(url_for('home'))
+
+@app.route("/admin/customers")
+@login_required
+def customers():
+    username = current_user.username
+    if username == "admin":
+        Customers = Customer.query.all()
+        return render_template("customers.html", customers=Customers)
+    else:
+        return redirect(url_for('home'))
+
+@app.route("/admin/reports")
+@login_required
+def reports():
+    username = current_user.username
+    if username == "admin":
+        return render_template("reports.html")
     else:
         return redirect(url_for('home'))
 

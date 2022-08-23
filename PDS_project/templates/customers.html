@@ -16,7 +16,7 @@
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='dashboard.css')}}" rel="stylesheet">
 
-    <title>Admin Panel | WDS</title>
+    <title>Customers | WDS</title>
 </head>
 
 <body>
@@ -45,13 +45,13 @@
                 <div class="position-sticky pt-3 sidebar-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">
+                            <a class="nav-link" aria-current="page" href="{{ url_for('admin') }}">
                                 <span data-feather="home" class="align-text-bottom"></span>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('customers') }}">
+                            <a class="nav-link active" href="{{ url_for('customers') }}">
                                 <span data-feather="users" class="align-text-bottom"></span>
                                 Customers
                             </a>
@@ -69,20 +69,38 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Dashboard</h1>
-                    <!-- <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                            <span data-feather="calendar" class="align-text-bottom"></span>
-                            This week
-                        </button>
-                    </div> -->
+                    <h1 class="h2">Customers</h1>
                 </div>
 
-                <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+                <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
+                <table class="table table-bordered border-primary">
+                    <thead>
+                        <tr>
+                            <th scope="col">CID</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Street</th>
+                            <th scope="col">City</th>
+                            <th scope="col">Zipcode</th>
+                            <th scope="col">Gender</th>
+                            <th scope="col">Marital Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td>{{ customer.cid}}</td>
+                            <td>{{ customer.first_name}}</td>
+                            <td>{{ customer.last_name}}</td>
+                            <td>{{ customer.street}}</td>
+                            <td>{{ customer.city}}</td>
+                            <td>{{ customer.zipcode}}</td>
+                            <td>{{ customer.gender}}</td>
+                            <td>{{ customer.marital_status}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </main>
         </div>
     </div>
