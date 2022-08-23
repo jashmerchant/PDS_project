@@ -36,7 +36,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USERNAME'] = 'bhargavamakwana@gmail.com'
-app.config['MAIL_PASSWORD'] = 'cbiuiizedgfytrxh'
+app.config['MAIL_PASSWORD'] = 'rxbrebznbrzxnzpi'
 app.config['MAIL_USE_SSL'] = True
 mail=Mail(app)
 
@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
     def get_token(self, expires_sec=400):
         serial = Serializer(app.config['SECRET_KEY'], expires_in=expires_sec)
         return serial.dumps({'user_id': self.id}).decode('utf-8')
-    
+
     @staticmethod
     def verify_token(token):
         serial = Serializer(app.config['SECRET_KEY'])
@@ -172,7 +172,7 @@ class ForgotPasswordForm(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     submit = SubmitField("Send")
 
-class ResetPassword(FlaskForm):
+class ResetPasswordForm(FlaskForm):
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
     confirm_password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Confirm Password"})
     submit = SubmitField("Submit")
@@ -343,8 +343,10 @@ def send_password_reset_link(user):
 def send_email(s, html):
     pass
 
+"""
 @app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
 def reset_token(token):
+    print("Calling reset token function!")
     try:
          password_reset_serializer = URLSafeTimedSerializer(app.config)
          email = password_reset_serializer.loads(token, salt='password-reset-salt', max_age=3600)
@@ -368,7 +370,26 @@ def reset_token(token):
     return render_template('reset_password.html',token=token, form=form)
 
 
+"""
 
+
+@app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    user = User.verify_token(token)
+    if user is None:
+        flash("Warning", "success")
+        return redirect(url_for('forgot_password'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        print("Inside reset token!")
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password=hashed_password
+        db.session.commit()
+        flash("Password Change Successful", "success")
+        return redirect(url_for('login'))
+    print("Before render template")
+    return render_template("reset_password.html", form=form, token=token)
 
 # Registration Route
 @app.route("/register", methods=['GET', 'POST'])
