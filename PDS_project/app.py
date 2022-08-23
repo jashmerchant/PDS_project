@@ -3,6 +3,7 @@
 # ***************************************
 from flask import Flask, render_template, url_for, redirect, flash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous.url_safe import URLSafeTimedSerializer
 from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -31,12 +32,12 @@ login_manager.login_message_category = "error"
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-app.config['MAIL_SERVER'] = 'smtp@gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'johndopehere@gmail.com' 
-app.config['MAIL_PASSWORD'] = 'Itshighnoon@71'
-
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USERNAME'] = 'bhargavamakwana@gmail.com'
+app.config['MAIL_PASSWORD'] = 'cbiuiizedgfytrxh'
+app.config['MAIL_USE_SSL'] = True
 mail=Mail(app)
 
 
@@ -167,7 +168,7 @@ class LoginForm(FlaskForm):
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
     submit = SubmitField("Login")
 
-class ForgotPassword(FlaskForm):
+class ForgotPasswordForm(FlaskForm):
     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
     submit = SubmitField("Send")
 
@@ -303,39 +304,71 @@ def logout():
 # Forgot Password routes
 def send_mail(user):
     token = user.get_token()
-    msg = Message('Password Reset Request', recipients=[user.email], sender='johndopehere@gmail.com')
-    msg.body = f''' To reset password. 
+    msg = Message('Password Reset Request', recipients=[user.email], sender='bhargavamakwana@gmail.com')
+    msg.body = f''' To reset password.
         {url_for('reset_token', token=token, _external=True)}
     '''
     mail.send(msg)
 
 @app.route("/forgotpassword", methods=['GET', 'POST'])
 def forgot_password():
-    form = ForgotPassword()
+    form = ForgotPasswordForm()
+    print("Calling here")
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_mail(user)
+        try:
+            user = User.query.filter_by(email=form.email.data).first_or_404()
+            print("Calling inside try!")
             print(user)
-            flash("Password reset link sent", "success")
-            return redirect(url_for('login'))
-    return render_template("forgot_password.html", form=form)
+        except:
+            print("Calling inside Except!")
+            flash('Invalid email address!', 'error')
+            return render_template('forgot_password.html', form=form)
+        send_password_reset_link(user)
+        flash('Please check your email for a password reset link.',
+             'success')
+        return redirect(url_for('login'))
+    return render_template('forgot_password.html', form=form)
+
+
+def send_password_reset_link(user):
+     password_reset_serializer = URLSafeTimedSerializer(app.config)
+     password_reset_url = url_for(
+                      'reset_token',
+                      token = password_reset_serializer.dumps(user.email, salt='password-reset-salt'),
+                       _external=True)
+     send_mail(user)
+
+
+
+def send_email(s, html):
+    pass
 
 @app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
 def reset_token(token):
-    user = User.verify_token(token)
-    if user is None:
-        flash("Warning", "success")
-        return redirect(url_for('forgot_password'))
-    
-    form = ResetPassword()
+    try:
+         password_reset_serializer = URLSafeTimedSerializer(app.config)
+         email = password_reset_serializer.loads(token, salt='password-reset-salt', max_age=3600)
+    except:
+         flash('The password reset link is invalid or has expired.', 'error')
+         return redirect(url_for('login'))
+
+    form = ResetPasswordForm()
+
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user.password=hashed_password
-        db.session.commit()
-        flash("Password Change Successful", "success")
-        return redirect(url_for('login'))
-    return render_template("reset_password.html", form=form)
+         try:
+             user = User.query.filter_by(email=email).first_or_404()
+         except:
+             flash('Invalid email address!', 'error')
+             return redirect(url_for('login'))
+         user.password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+         db.session.add(user)
+         db.session.commit()
+         flash('Your password has been updated!', 'success')
+         return redirect(url_for('login'))
+    return render_template('reset_password.html',token=token, form=form)
+
+
+
 
 # Registration Route
 @app.route("/register", methods=['GET', 'POST'])
