@@ -62,7 +62,6 @@ class User(db.Model, UserMixin):
             return None
         return User.query.get(user_id)
 
-
 class Driver(db.Model, UserMixin):
     dln = db.Column(db.Integer, primary_key=True)
     state = db.Column(db.String(20), primary_key=True)
@@ -224,7 +223,6 @@ class DriverForm(FlaskForm):
     lname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Last Name"})
     dob = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Date of Birth"})
 
-
 class HomeInsuranceForm(FlaskForm):
     policy_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter policy id"})
     h_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter home id"})
@@ -255,6 +253,7 @@ class CustomerInsurancesTable(Table):
 # ***************************************
 # ================ ROUTES ===============
 # ***************************************
+# Homepage Route
 @app.route("/")
 @app.route("/home")
 @login_required
@@ -277,6 +276,7 @@ def home():
 
     return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
+# Login Route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -293,13 +293,14 @@ def login():
     return redirect(url_for('home'))
 
 
-
+# Logout Route
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
+# Forgot Password routes
 def send_mail(user):
     token = user.get_token()
     msg = Message('Password Reset Request', recipients=[user.email], sender='johndopehere@gmail.com')
@@ -336,6 +337,7 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template("reset_password.html", form=form)
 
+# Registration Route
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -350,12 +352,14 @@ def register():
 
     return render_template("register.html", form=form)
 
+# Admin Routes
 @app.route("/admin")
 @login_required
 def admin():
     username = current_user.username
     if username == "admin":
-        return render_template("admin.html")
+        Users = User.query.all()
+        return render_template("admin.html", users=Users)
     else:
         return redirect(url_for('home'))
 
@@ -378,8 +382,16 @@ def reports():
     else:
         return redirect(url_for('home'))
 
-
-
+@app.route("/delete_user/<int:id>")
+def delete_user(id):
+    username = current_user.username
+    if username == "admin":
+        user_to_delete = User.query.get(id)
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        return redirect(url_for('admin'))
+    else:
+        return redirect(url_for('home'))
 
 
 if __name__ == "__main__":
