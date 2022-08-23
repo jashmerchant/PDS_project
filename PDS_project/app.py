@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 # from flask_wtf import FlaskForm
-from forms import RegistrationForm, LoginForm, ForgotPasswordForm, ResetPasswordForm, CustomerForm, VehicleForm, DriverForm, HomeInsuranceForm, AutoInsuranceForm, PaymentForm
+import forms
 from flask_mail import Mail, Message
 # from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
 # from wtforms.validators import InputRequired, Length, ValidationError
@@ -131,7 +131,6 @@ class HomeInsurance(db.Model, UserMixin):
     end_date = db.Column(db.Date(), nullable=False)
     premium = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(1), nullable=False)
-
 class AutoInsurance(db.Model, UserMixin):
     policy_id = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
     vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
@@ -186,7 +185,6 @@ def home():
         #.load_only(AutoInsurance.policy_id, AutoInsurance.start_date, AutoInsurance.start_end, AutoInsurance.premium)\
         #.all()
 
-    # print(home_insurances)
     home_table = CustomerInsurancesTable(home_insurances)
     auto_table = CustomerInsurancesTable(auto_insurances)
 
@@ -201,7 +199,7 @@ def mypolicies():
 # Login Route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
+    form = forms.LoginForm()
     if not form.validate_on_submit():
         return render_template("login.html", form=form)
     user = User.query.filter_by(username=form.username.data).first()
@@ -233,7 +231,7 @@ def send_mail(user):
 
 @app.route("/forgotpassword", methods=['GET', 'POST'])
 def forgot_password():
-    form = ForgotPasswordForm()
+    form = forms.ForgotPasswordForm()
     print("Calling here")
     if form.validate_on_submit():
         try:
@@ -260,40 +258,6 @@ def send_password_reset_link(user):
      send_mail(user)
 
 
-
-def send_email(s, html):
-    pass
-
-"""
-@app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
-def reset_token(token):
-    print("Calling reset token function!")
-    try:
-         password_reset_serializer = URLSafeTimedSerializer(app.config)
-         email = password_reset_serializer.loads(token, salt='password-reset-salt', max_age=3600)
-    except:
-         flash('The password reset link is invalid or has expired.', 'error')
-         return redirect(url_for('login'))
-
-    form = ResetPasswordForm()
-
-    if form.validate_on_submit():
-         try:
-             user = User.query.filter_by(email=email).first_or_404()
-         except:
-             flash('Invalid email address!', 'error')
-             return redirect(url_for('login'))
-         user.password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-         db.session.add(user)
-         db.session.commit()
-         flash('Your password has been updated!', 'success')
-         return redirect(url_for('login'))
-    return render_template('reset_password.html',token=token, form=form)
-
-
-"""
-
-
 @app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
 def reset_token(token):
     user = User.verify_token(token)
@@ -301,7 +265,7 @@ def reset_token(token):
         flash("Warning", "success")
         return redirect(url_for('forgot_password'))
 
-    form = ResetPasswordForm()
+    form = forms.ResetPasswordForm()
     if form.validate_on_submit():
         print("Inside reset token!")
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -315,7 +279,7 @@ def reset_token(token):
 # Registration Route
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
+    form = forms.RegistrationForm()
     # Hashes password and stores in db on successful registration of a user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
@@ -367,6 +331,14 @@ def delete_user(id):
         return redirect(url_for('admin'))
     else:
         return redirect(url_for('home'))
+
+
+@app.route("/homeinsurance", methods=['GET', 'POST'])
+def home_insurance_submit():
+    new_home = Home(purchase_date, purchase_value, area, home_type, aff, hss, sp, basement, street, city, zipcode)
+    new_home_policy = HomeInsurance(start_date, end_date, premium, status)
+
+
 
 
 if __name__ == "__main__":

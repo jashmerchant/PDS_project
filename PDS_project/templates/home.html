@@ -63,7 +63,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-5 pt-0">
-                                <form class="" method="POST">
+                                <form action="{{ url_for('home_insurance_submit') }}" class="" method="POST">
                                     <div class="form mb-3">
                                         <label for="disabledTextInput" class="form-label">Insurance Type</label>
                                         <input type="text" name="insurancetype" value="A" id="disabledTextInput"
