@@ -1,16 +1,17 @@
 # ***************************************
 # =============== IMPORTS ===============
 # ***************************************
-import socket
 from flask import Flask, render_template, url_for, redirect, flash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous.url_safe import URLSafeTimedSerializer
 from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from flask_wtf import FlaskForm
+# from flask_wtf import FlaskForm
+from forms import RegistrationForm, LoginForm, ForgotPasswordForm, ResetPasswordForm, CustomerForm, VehicleForm, DriverForm, HomeInsuranceForm, AutoInsuranceForm, PaymentForm
 from flask_mail import Mail, Message
-from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
-from wtforms.validators import InputRequired, Length, ValidationError
+# from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
+# from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 
 
@@ -32,12 +33,12 @@ login_manager.login_message_category = "error"
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-app.config['MAIL_SERVER'] = 'smtp@gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'johndopehere@gmail.com' 
-app.config['MAIL_PASSWORD'] = 'Itshighnoon@71'
-
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USERNAME'] = 'bhargavamakwana@gmail.com'
+app.config['MAIL_PASSWORD'] = 'rxbrebznbrzxnzpi'
+app.config['MAIL_USE_SSL'] = True
 mail=Mail(app)
 
 
@@ -53,7 +54,7 @@ class User(db.Model, UserMixin):
     def get_token(self, expires_sec=400):
         serial = Serializer(app.config['SECRET_KEY'], expires_in=expires_sec)
         return serial.dumps({'user_id': self.id}).decode('utf-8')
-    
+
     @staticmethod
     def verify_token(token):
         serial = Serializer(app.config['SECRET_KEY'])
@@ -144,106 +145,14 @@ class CustomerInsurance(db.Model, UserMixin):
  policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
 
 # ***************************************
-# ================ FORMS ================
+# ================ TABLES ================
 # ***************************************
-class RegistrationForm(FlaskForm):
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Username"})
-    email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
-    submit = SubmitField("Register")
-
-    # Validate if username is unique
-    def validate_username(self, username):
-        # Try to look through db to find a similar username
-        existing_user_username = User.query.filter_by(
-            username=username.data).first()
-        # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
-        if existing_user_username:
-            flash("That username already exists. Please choose a different one.", "error")
-            raise ValidationError(
-                'That username already exists. Please choose a different one.')
-
-class LoginForm(FlaskForm):
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Username"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
-    submit = SubmitField("Login")
-
-class ForgotPassword(FlaskForm):
-    email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
-    submit = SubmitField("Send")
-
-class ResetPassword(FlaskForm):
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
-    confirm_password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Confirm Password"})
-    submit = SubmitField("Submit")
-
 class CustomerInsurancesTable(Table):
     policy_id = Col('Policy Number')
     start_date = Col('Start Date')
     end_date = Col('End Date')
     premium = Col('Premium')
     status = Col('Status')
-
-class CustomerForm(FlaskForm):
-    cust_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter customer id"})
-    fname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter First Name"})
-    lname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Last Name"})
-    street = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Address"})
-    city = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter City"})
-    zipcode = IntegerField(validators=[InputRequired(), Length(5)], render_kw={"placeholder": "Enter Zip code"})
-    gender = RadioField('Gender', choices=[('M', 'Male'), ('F', 'Female')])
-    married_status = RadioField('Marital Status', choices=[('M', 'Married'), ('S', 'Single'), ('W', 'Widow')])
-    #cust type field is not decalred. As discussed we assume that the person is the customer
-    submit = SubmitField("Register")
-
-# class HomeForm(FlaskForm):
-#     purchase_value = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
-#     area = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Area"})
-#     aff = RadioField(validators=[InputRequired()])
-#     hss = RadioField(validators=[InputRequired()])
-#     basement = BooleanField(validators=[InputRequired()], render_kw={"placeholder": "Enter Basement"})
-#     zipcode = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Purchase Value"})
-#     city = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter City"})
-#     purchase_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Date"})
-#     street = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Address"})
-#     home_type = RadioField('Home Type', choices=[('S', 'Single Family'), ('M', 'Multi Family'), ('C', 'Condominium', 'T', 'Town House')])
-#     pool = RadioField('Swimming pool', choices=[('U', 'Underground Pool'), ('O', 'Overground Pool'), ('I', 'Indoor Pool', 'M', 'Multiple Pool')])
-#     submit = SubmitField("Register")
-
-class VehicleForm(FlaskForm):
-    vehicle_id = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle ID number"})
-    make = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle make number"})
-    model = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle model"})
-    year = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Year of the vehicle purchased"})
-    status = RadioField('Swimming pool', choices=[('L', 'Leased'), ('O', 'Owned'), ('F', 'Financed')])
-
-class DriverForm(FlaskForm):
-    dln = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Driver license number"})
-    state = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter State"})
-    fname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter First Name"})
-    lname = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Last Name"})
-    dob = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Date of Birth"})
-
-class HomeInsuranceForm(FlaskForm):
-    policy_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter policy id"})
-    h_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter home id"})
-    start_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Start Date"})
-    end_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter End Date"})
-    premium = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Premium Amount"})
-    status = RadioField('Home Type', choices=[('C', 'Current'), ('P', 'Expired')])
-
-class AutoInsuranceForm(FlaskForm):
-    policy_id = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter policy id"})
-    vehicle_id = StringField(validators=[InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Enter Vehicle ID number"})
-    start_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter Start Date"})
-    end_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter End date"})
-    premium = IntegerField(validators=[InputRequired()], render_kw={"placeholder": "Enter Premium Amount"})
-    status = RadioField('Home Type', choices=[('C', 'Current'), ('P', 'Expired')])
-
-class PaymentForm(FlaskForm):
-    # The actual table has couple of other fields but not sure if we need to take from the user or impute them with internal logic.
-    paym_date = DateField(validators=[InputRequired()], render_kw={"placeholder": "Enter payment date"})
-    method = RadioField('Payment Method', choices=[('PayPal'), ('Credit'), ('Debit'), ('Check')])
 
 class CustomerInsurancesTable(Table):
     policy_id = Col('Policy Number')
@@ -316,23 +225,74 @@ def logout():
 # Forgot Password routes
 def send_mail(user):
     token = user.get_token()
-    msg = Message('Password Reset Request', recipients=[user.email], sender='johndopehere@gmail.com')
-    msg.body = f''' To reset password. 
+    msg = Message('Password Reset Request', recipients=[user.email], sender='bhargavamakwana@gmail.com')
+    msg.body = f''' To reset password.
         {url_for('reset_token', token=token, _external=True)}
     '''
     mail.send(msg)
 
 @app.route("/forgotpassword", methods=['GET', 'POST'])
 def forgot_password():
-    form = ForgotPassword()
+    form = ForgotPasswordForm()
+    print("Calling here")
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_mail(user)
+        try:
+            user = User.query.filter_by(email=form.email.data).first_or_404()
+            print("Calling inside try!")
             print(user)
-            flash("Password reset link sent", "success")
-            return redirect(url_for('login'))
-    return render_template("forgot_password.html", form=form)
+        except:
+            print("Calling inside Except!")
+            flash('Invalid email address!', 'error')
+            return render_template('forgot_password.html', form=form)
+        send_password_reset_link(user)
+        flash('Please check your email for a password reset link.',
+             'success')
+        return redirect(url_for('login'))
+    return render_template('forgot_password.html', form=form)
+
+
+def send_password_reset_link(user):
+     password_reset_serializer = URLSafeTimedSerializer(app.config)
+     password_reset_url = url_for(
+                      'reset_token',
+                      token = password_reset_serializer.dumps(user.email, salt='password-reset-salt'),
+                       _external=True)
+     send_mail(user)
+
+
+
+def send_email(s, html):
+    pass
+
+"""
+@app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    print("Calling reset token function!")
+    try:
+         password_reset_serializer = URLSafeTimedSerializer(app.config)
+         email = password_reset_serializer.loads(token, salt='password-reset-salt', max_age=3600)
+    except:
+         flash('The password reset link is invalid or has expired.', 'error')
+         return redirect(url_for('login'))
+
+    form = ResetPasswordForm()
+
+    if form.validate_on_submit():
+         try:
+             user = User.query.filter_by(email=email).first_or_404()
+         except:
+             flash('Invalid email address!', 'error')
+             return redirect(url_for('login'))
+         user.password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+         db.session.add(user)
+         db.session.commit()
+         flash('Your password has been updated!', 'success')
+         return redirect(url_for('login'))
+    return render_template('reset_password.html',token=token, form=form)
+
+
+"""
+
 
 @app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
 def reset_token(token):
@@ -340,15 +300,17 @@ def reset_token(token):
     if user is None:
         flash("Warning", "success")
         return redirect(url_for('forgot_password'))
-    
-    form = ResetPassword()
+
+    form = ResetPasswordForm()
     if form.validate_on_submit():
+        print("Inside reset token!")
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user.password=hashed_password
         db.session.commit()
         flash("Password Change Successful", "success")
         return redirect(url_for('login'))
-    return render_template("reset_password.html", form=form)
+    print("Before render template")
+    return render_template("reset_password.html", form=form, token=token)
 
 # Registration Route
 @app.route("/register", methods=['GET', 'POST'])
