@@ -260,6 +260,11 @@ class CustomerInsurancesTable(Table):
 @login_required
 def home():
     # form = HomeForm()
+    # If user is admin, redirect him to admin panel
+    username = current_user.username
+    if username == "admin":
+        return redirect(url_for("admin"))
+
     home_insurances = HomeInsurance.query.join(Insurance, HomeInsurance.policy_id == Insurance.policy_id )\
         .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id)\
         .filter(CustomerInsurance.cid == current_user.id).all()\
@@ -277,6 +282,12 @@ def home():
     auto_table = CustomerInsurancesTable(auto_insurances)
 
     return render_template("home.html", auto_table = auto_table, home_table=home_table)
+
+# My Policies Route
+@app.route("/mypolicies")
+@login_required
+def mypolicies():
+    return render_template("mypolicies.html")
 
 # Login Route
 @app.route("/login", methods=['GET', 'POST'])

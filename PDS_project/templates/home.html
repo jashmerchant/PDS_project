@@ -29,7 +29,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My Policies</a>
+                        <a class="nav-link" href="{{ url_for('mypolicies')}}">My Policies</a>
                     </li>
                 </ul>
                 <div class="text-end">
@@ -49,8 +49,147 @@
             </p>
 
             <div class="mb-5">
-                <a href="#" class="btn btn-warning btn-lg px-3"><i class="fa-solid fa-car"></i> Auto
+                <a href="#" class="btn btn-warning btn-lg px-3" data-bs-toggle="modal"
+                    data-bs-target="#autoInsurance"><i class="fa-solid fa-car"></i> Auto
                     Insurance</a>
+                <div class="modal fade" id="autoInsurance" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="autoInsuranceLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header p-5 pb-4 border-bottom-0">
+                                <!-- <h5 class="modal-title">Modal title</h5> -->
+                                <h2 class="fw-bold mb-0">Auto Insurance</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-5 pt-0">
+                                <form class="" method="POST">
+                                    <div class="form mb-3">
+                                        <label for="disabledTextInput" class="form-label">Insurance Type</label>
+                                        <input type="text" name="insurancetype" value="A" id="disabledTextInput"
+                                            class="form-control" disabled>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="First Name" required>
+                                        <label for="floatingInput">First Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Last Name" required>
+                                        <label for="floatingInput">Last Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="floatingSelect"
+                                            aria-label="Floating label select example" required>
+                                            <option value="S">Single</option>
+                                            <option value="M">Married</option>
+                                            <option value="W">Widow/Widower</option>
+                                        </select>
+                                        <label for="floatingSelect">Marital Status</label>
+                                    </div>
+                                    <label for="floatingPassword">Gender</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                id="flexRadioDefault1" value="aff" required>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Female
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                id="flexRadioDefault2" value="noaff" required checked>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Male
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingText"
+                                            placeholder="Street" required>
+
+                                        <label for="floatingText">Street</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingZipcode"
+                                            placeholder="Zipcode" required>
+
+                                        <label for="floatingZipcode">Zipcode</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingCity"
+                                            placeholder="City" required>
+
+                                        <label for="floatingCity">City</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="VIN" required>
+                                        <label for="floatingInput">Vehicle Identification #</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Make" required>
+                                        <label for="floatingInput">Make</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Model" required>
+                                        <label for="floatingInput">Model</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Year" required>
+                                        <label for="floatingInput">Year</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="floatingSelect"
+                                            aria-label="Floating label select example" required>
+                                            <option value="L">Leased</option>
+                                            <option value="F">Financed</option>
+                                            <option value="O">Owned</option>
+                                        </select>
+                                        <label for="floatingSelect">Vehicle Status</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Driver First Name" required>
+                                        <label for="floatingInput">Driver First Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Driver Last Name" required>
+                                        <label for="floatingInput">Driver Last Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Driver Lisence #" required>
+                                        <label for="floatingInput">Driver Lisence Number</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Driver DOB" required>
+                                        <label for="floatingInput">Driver DOB</label>
+                                    </div>
+
+                                    <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary"
+                                        type="submit">Submit</button>
+                                    <small class="text-muted">By clicking Sign up, you agree to the terms of
+                                        use.</small>
+
+                                </form>
+                            </div>
+                            <!-- <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Understood</button>
+                            </div> -->
+                        </div>
+                    </div>
+
+                </div>
+
                 <a href="#" class="btn btn-primary btn-lg px-3 mx-3" data-bs-toggle="modal"
                     data-bs-target="#staticBackdrop"><i class="fa-solid fa-house-user"></i>
                     Home Insurance</a>
@@ -68,6 +207,48 @@
                             </div>
                             <div class="modal-body p-5 pt-0">
                                 <form class="" method="POST">
+                                    <div class="form mb-3">
+                                        <label for="disabledTextInput" class="form-label">Insurance Type</label>
+                                        <input type="text" name="insurancetype" value="H" id="disabledTextInput"
+                                            class="form-control" disabled>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="First Name" required>
+                                        <label for="floatingInput">First Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Last Name" required>
+                                        <label for="floatingInput">Last Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="floatingSelect"
+                                            aria-label="Floating label select example" required>
+                                            <option value="S">Single</option>
+                                            <option value="M">Married</option>
+                                            <option value="W">Widow/Widower</option>
+                                        </select>
+                                        <label for="floatingSelect">Marital Status</label>
+                                    </div>
+                                    <label for="floatingPassword">Gender</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                id="flexRadioDefault1" value="aff" required>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Female
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                id="flexRadioDefault2" value="noaff" required checked>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Male
+                                            </label>
+                                        </div>
+                                    </div>
                                     <div class="form-floating mb-3">
                                         <input type="number" class="form-control rounded-3" id="floatingInput"
                                             placeholder="Purchase Value" required>
@@ -175,8 +356,8 @@
 
                                         <label for="floatingCity">City</label>
                                     </div>
-                                    <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign
-                                        up</button>
+                                    <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary"
+                                        type="submit">Submit</button>
                                     <small class="text-muted">By clicking Sign up, you agree to the terms of
                                         use.</small>
 
