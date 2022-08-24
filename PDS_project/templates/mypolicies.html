@@ -51,6 +51,7 @@
                     <th scope="col">End Date</th>
                     <th scope="col">Premium</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Invoice</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +62,7 @@
                     <td>{{ ins.end_date }}</td>
                     <td>{{ ins.premium }}</td>
                     <td>{{ ins.status }}</td>
+                    <td><button type="button" class="btn btn-warning btn-sm">Pay now</button></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -87,7 +89,7 @@
                     <td>{{ ins.end_date }}</td>
                     <td>{{ ins.premium }}</td>
                     <td>{{ ins.status }}</td>
-                    <td><button class="btn btn-warning btn-sm">Pay now</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm">Pay now</button></td>
                 </tr>
                 {% endfor %}
             </tbody>
