@@ -223,7 +223,21 @@ def home():
 @app.route("/mypolicies")
 @login_required
 def mypolicies():
-    return render_template("mypolicies.html")
+    home_insurances = HomeInsurance.query.join(Insurance, HomeInsurance.policy_id == Insurance.policy_id ) \
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+
+    auto_insurances = AutoInsurance.query.join(Insurance, AutoInsurance.policy_id == Insurance.policy_id ) \
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+
+
+    a=HomeInsurance.query.all()
+    print("-"*10000)
+    x = [[p.policy_id, p.start_date, p.end_date, p.premium, p.status] for p in home_insurances]
+    print(x)
+
+    return render_template("mypolicies.html", home_insurances= set(home_insurances), auto_insurance=set(auto_insurances))
 
 # Login Route
 @app.route("/login", methods=['GET', 'POST'])
