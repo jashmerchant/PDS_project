@@ -279,24 +279,20 @@ def add_auto_insurance():
     new_driver = Driver(dln=dln, state=state, first_name=first, last_name=last, dob=dob)
     db.session.add(new_driver)
     db.session.commit()
-
-
     start_date=datetime(2022,1,1)
     end_date= datetime(2022,2,2)
     policy_id = random.randint(10000,1000000)
     new_auto_insurance = AutoInsurance(policy_id= policy_id, vin=vin ,start_date= start_date ,end_date=end_date , premium=200 , status ='C')
     db.session.add(new_auto_insurance)
     db.session.commit()
-
     new_insurance=Insurance(policy_id=policy_id, policy_type='A')
     db.session.add(new_insurance)
     db.session.commit()
-
     new_customer_insurance = CustomerInsurance(cid=current_user.id ,policy_id=policy_id)
     db.session.add(new_customer_insurance)
     db.session.commit()
-
-    return "Success"
+    flash("Insurance application submitted!", "success")
+    return redirect(url_for('home'))
 
 
 @app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
