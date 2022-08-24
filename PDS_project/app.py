@@ -1,7 +1,7 @@
 # ***************************************
 # =============== IMPORTS ===============
 # ***************************************
-from flask import Flask, render_template, url_for, redirect, flash
+from flask import Flask, render_template, url_for, redirect, flash, request
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +13,7 @@ from flask_mail import Mail, Message
 # from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
 # from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 
 # ***************************************
@@ -123,9 +124,9 @@ class Home(db.Model, UserMixin):
     street = db.Column(db.String(30), nullable=False)
     city = db.Column(db.String(30), nullable=False)
     zipcode = db.Column(db.Integer, nullable=False)
-
+    child = db.relationship('HomeInsurance', backref='parent', uselist=False)
 class HomeInsurance(db.Model, UserMixin):
-    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True, unique=True)
     policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
     start_date = db.Column(db.Date(), nullable=False)
     end_date = db.Column(db.Date(), nullable=False)
@@ -335,9 +336,30 @@ def delete_user(id):
 
 @app.route("/homeinsurance", methods=['GET', 'POST'])
 def home_insurance_submit():
-    new_home = Home(purchase_date, purchase_value, area, home_type, aff, hss, sp, basement, street, city, zipcode)
-    new_home_policy = HomeInsurance(start_date, end_date, premium, status)
-
+    fname = request.form.get("fname")
+    lname = request.form.get("lname")
+    married_status = request.form.get("married")
+    gender = request.form.get("gender")
+    purchase_value = request.form.get("pval")
+    area = request.form.get("area")
+    aff = request.form.get("aff")
+    hss = request.form.get("hss")
+    bs = request.form.get("bs")
+    pool = request.form.get("pool")
+    house_type = request.form.get("house")
+    street = request.form.get("street")
+    zip = request.form.get("zip")
+    city = request.form.get("city")
+    purchase_date = request.form.get("date")
+    dt = datetime.strptime(purchase_date, '%Y-%m-%d').date()
+    print(fname, lname, married_status, gender, purchase_value, area, aff, hss, bs, pool, house_type, street, zip, city, purchase_date)
+    new_insurance = Insurance(policy_tye=policy_type)
+    new_home = Home(purchase_date=dt, purchase_value=purchase_value, area=area, home_type=house_type, aff=aff, hss=hss, sp=pool, basement=bs, street=street, city=city, zipcode=zip)
+    new_home_policy = HomeInsurance(start_date=dt, end_date=dt, premium=int(area)*2, status='C', parent=new_home)
+    db.session.add(new_home)
+    db.session.add(new_home_policy)
+    db.session.commit()
+    return render_template("Successfully created policy!")
 
 
 

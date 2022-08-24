@@ -63,7 +63,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-5 pt-0">
-                                <form action="{{ url_for('home_insurance_submit') }}" class="" method="POST">
+                                <form  class="" method="POST">
                                     <div class="form mb-3">
                                         <label for="disabledTextInput" class="form-label">Insurance Type</label>
                                         <input type="text" name="insurancetype" value="A" id="disabledTextInput"
@@ -206,7 +206,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-5 pt-0">
-                                <form class="" method="POST">
+                                <form action="{{ url_for('home_insurance_submit') }}" class="" method="POST">
                                     <div class="form mb-3">
                                         <label for="disabledTextInput" class="form-label">Insurance Type</label>
                                         <input type="text" name="insurancetype" value="H" id="disabledTextInput"
@@ -214,17 +214,17 @@
                                     </div>
 
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                        <input type="text" class="form-control rounded-3" id="floatingInput" name="fname"
                                             placeholder="First Name" required>
                                         <label for="floatingInput">First Name</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                        <input type="text" class="form-control rounded-3" id="floatingInput" name="lname"
                                             placeholder="Last Name" required>
                                         <label for="floatingInput">Last Name</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect"
+                                        <select class="form-select" id="floatingSelect" name="married"
                                             aria-label="Floating label select example" required>
                                             <option value="S">Single</option>
                                             <option value="M">Married</option>
@@ -250,19 +250,19 @@
                                         </div>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                        <input type="number" class="form-control rounded-3" id="floatingInput" name="pval"
                                             placeholder="Purchase Value" required>
                                         <label for="floatingInput">Purchase Value</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                        <input type="number" class="form-control rounded-3" id="floatingInput" name="area"
                                             placeholder="Area (sq ft)" required>
 
                                         <label for="floatingInput">Area (sq ft)</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingDate"
-                                            placeholder="Date" required>
+                                      <input type="date" class="form-control rounded-3" id="floatingDate" name="date"
+                                             placeholder="YYYY-DD-MM" required>
 
                                         <label for="floatingDate">Purchase Date</label>
                                     </div>
@@ -318,7 +318,7 @@
                                         </div>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect"
+                                        <select class="form-select" id="floatingSelect" name="pool"
                                             aria-label="Floating label select example" required>
                                             <option value="U">Underground swimming pool</option>
                                             <option value="O">Overground swimming pool</option>
@@ -329,7 +329,7 @@
                                         <label for="floatingSelect">Swimming Pool</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect"
+                                        <select class="form-select" id="floatingSelect" name="house"
                                             aria-label="Floating label select example" required>
                                             <option value="S">Single Family</option>
                                             <option value="M">Multi Family</option>
@@ -339,19 +339,19 @@
                                         <label for="floatingSelect">Type of Home</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingText"
+                                        <input type="text" class="form-control rounded-3" id="floatingText" name="street"
                                             placeholder="Street" required>
 
                                         <label for="floatingText">Street</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingZipcode"
+                                        <input type="text" class="form-control rounded-3" id="floatingZipcode" name="zip"
                                             placeholder="Zipcode" required>
 
                                         <label for="floatingZipcode">Zipcode</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingCity"
+                                        <input type="text" class="form-control rounded-3" id="floatingCity" name="city"
                                             placeholder="City" required>
 
                                         <label for="floatingCity">City</label>
