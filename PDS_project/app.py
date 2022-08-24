@@ -191,6 +191,8 @@ def home():
     home_table = CustomerInsurancesTable(home_insurances)
     auto_table = CustomerInsurancesTable(auto_insurances)
 
+    
+
     return render_template("home.html", auto_table = auto_table, home_table=home_table)
 
 # My Policies Route
@@ -263,6 +265,16 @@ def send_password_reset_link(user):
 
 @app.route("/newautoinsurance", methods=['GET', 'POST'])
 def add_auto_insurance():
+    first_name= request.form.get("first_name")
+    last_name= request.form.get("last_name")
+    marital_status = request.form.get("marital_status")
+    gender = request.form.get("gender")
+    street = request.form.get("street")
+    city = request.form.get("city")
+    zipcode = request.form.get("zipcode")
+    new_customer = Customer(first_name=first_name, last_name=last_name, marital_status=marital_status, gender=gender, street=street, city=city, zipcode=zipcode)
+    db.session.add(new_customer)
+    db.session.commit()
     vin = request.form.get("vin")
     make = request.form.get("make")
     model = request.form.get("model")
@@ -372,8 +384,9 @@ def delete_user(id):
 
 @app.route("/homeinsurance", methods=['GET', 'POST'])
 def home_insurance_submit():
-    new_home = Home(purchase_date, purchase_value, area, home_type, aff, hss, sp, basement, street, city, zipcode)
-    new_home_policy = HomeInsurance(start_date, end_date, premium, status)
+    pass
+    # new_home = Home(purchase_date, purchase_value, area, home_type, aff, hss, sp, basement, street, city, zipcode)
+    # new_home_policy = HomeInsurance(start_date, end_date, premium, status)
 
 
 

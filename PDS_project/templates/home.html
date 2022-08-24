@@ -66,12 +66,66 @@
                                 <form action="{{ url_for('add_auto_insurance') }}" class="" method="POST">
                                     <div class="form mb-3">
                                         <label for="disabledTextInput" class="form-label">Insurance Type</label>
-                                        <input type="text" name="insurancetype" value="A" id="disabledTextInput"
+                                        <input type="text" name="A" value="A" id="disabledTextInput"
                                             class="form-control" disabled>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="number" class="form-control rounded-3" id="floatingInput"="vin" name="vin"
-                                            placeholder="VIN" required>
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="First Name" required name="first_name">
+                                        <label for="floatingInput">First Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            placeholder="Last Name" required name="last_name">
+                                        <label for="floatingInput">Last Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="floatingSelect"
+                                            aria-label="Floating label select example" required name="marital_status">
+                                            <option value="S">Single</option>
+                                            <option value="M">Married</option>
+                                            <option value="W">Widow/Widower</option>
+                                        </select>
+                                        <label for="floatingSelect">Marital Status</label>
+                                    </div>
+                                    <label for="floatingPassword">Gender</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                id="flexRadioDefault1" value="F" required>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Female
+                                            </label>
+                                        </div>
+                                        <div class="form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender"
+                                                id="flexRadioDefault2" value="M" required checked>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Male
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingText"
+                                            placeholder="Street" required name="street">
+
+                                        <label for="floatingText">Street</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingZipcode"
+                                            placeholder="Zipcode" required name="zipcode">
+
+                                        <label for="floatingZipcode">Zipcode</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingCity"
+                                            placeholder="City" required name="city">
+
+                                        <label for="floatingCity">City</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"="vin"
+                                            name="vin" placeholder="VIN" required>
                                         <label for="floatingInput">Vehicle Identification #</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -80,13 +134,13 @@
                                         <label for="floatingInput">Make</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingInput" name="model"
-                                            placeholder="Model" required>
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            name="model" placeholder="Model" required>
                                         <label for="floatingInput">Model</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="number" class="form-control rounded-3" id="floatingInput" name="year"
-                                            placeholder="Year" required>
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                            name="year" placeholder="Year" required>
                                         <label for="floatingInput">Year</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -99,8 +153,8 @@
                                         <label for="floatingSelect">Vehicle Status</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingInput" name="first"
-                                            placeholder="Driver First Name" required>
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            name="first" placeholder="Driver First Name" required>
                                         <label for="floatingInput">Driver First Name</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -109,19 +163,19 @@
                                         <label for="floatingInput">Driver Last Name</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="number" class="form-control rounded-3" id="floatingInput" name="dln"
-                                            placeholder="Driver Lisence #" required>
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"
+                                            name="dln" placeholder="Driver Lisence #" required>
                                         <label for="floatingInput">Driver Lisence Number</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input type="date" class="form-control rounded-3" id="floatingDate" name="dob"
-                                               placeholder="YYYY-DD-MM" required>
+                                            placeholder="YYYY-DD-MM" required>
 
                                         <label for="floatingInput">Driver DOB</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingInput" name="state"
-                                               placeholder="State" required>
+                                        <input type="text" class="form-control rounded-3" id="floatingInput"
+                                            name="state" placeholder="State" required>
 
                                         <label for="floatingText">State</label>
                                     </div>
