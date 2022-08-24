@@ -87,7 +87,7 @@ class VehicleDriver(db.Model, UserMixin):
 
 class Customer(db.Model, UserMixin):
     cid = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False)
+    # username = db.Column(db.String(20), nullable=False)
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
     street = db.Column(db.String(30), nullable=False)
@@ -210,7 +210,8 @@ def home():
     home_table = CustomerInsurancesTable(home_insurances)
     auto_table = CustomerInsurancesTable(auto_insurances)
 
-    this_customer = Customer.query.filter_by(username=username).first()
+    this_user = User.query.filter_by(username=username).first()
+    this_customer = Customer.query.filter_by(cid=this_user.id).first()
     if this_customer == None:
         is_customer = False
     else:
@@ -289,7 +290,8 @@ def send_password_reset_link(user):
 @app.route("/newautoinsurance", methods=['GET', 'POST'])
 def add_auto_insurance():
     username = current_user.username
-    this_customer = Customer.query.filter_by(username=username).first()
+    this_user = User.query.filter_by(username=username).first()
+    this_customer = Customer.query.filter_by(cid=this_user.id).first()
     print(f'AI {this_customer}')
     if this_customer == None:
         first_name= request.form.get("first_name")
@@ -299,7 +301,7 @@ def add_auto_insurance():
         street = request.form.get("street")
         city = request.form.get("city")
         zipcode = request.form.get("zipcode")
-        new_customer = Customer(username=username, first_name=first_name, last_name=last_name, marital_status=marital_status, gender=gender, street=street, city=city, zipcode=zipcode)
+        new_customer = Customer(cid=this_user.id, first_name=first_name, last_name=last_name, marital_status=marital_status, gender=gender, street=street, city=city, zipcode=zipcode)
         db.session.add(new_customer)
         # db.session.commit()
     vin = request.form.get("vin")
@@ -413,7 +415,8 @@ def delete_user(id):
 def home_insurance_submit():
     hid = request.form.get("hid")
     username = current_user.username
-    this_customer = Customer.query.filter_by(username=username).first()
+    this_user = User.query.filter_by(username=username).first()
+    this_customer = Customer.query.filter_by(cid=this_user.id).first()
     print(f'HI {this_customer}')
     if this_customer == None:
         fname = request.form.get("fname")
@@ -423,7 +426,7 @@ def home_insurance_submit():
         street = request.form.get("street")
         zip = request.form.get("zip")
         city = request.form.get("city")
-        new_customer = Customer(username=username, first_name=fname, last_name=lname, marital_status=married_status, gender=gender, street=street, city=city, zipcode=zip)
+        new_customer = Customer(cid=this_user.id, first_name=fname, last_name=lname, marital_status=married_status, gender=gender, street=street, city=city, zipcode=zip)
         db.session.add(new_customer)
         # db.session.commit()
     purchase_value = request.form.get("pval")
