@@ -223,7 +223,15 @@ def home():
 @app.route("/mypolicies")
 @login_required
 def mypolicies():
-    return render_template("mypolicies.html")
+    home_insurances = HomeInsurance.query.join(Insurance, HomeInsurance.policy_id == Insurance.policy_id ) \
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+
+    auto_insurances = AutoInsurance.query.join(Insurance, AutoInsurance.policy_id == Insurance.policy_id ) \
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+
+    return render_template("mypolicies.html", home_insurances= home_insurances, auto_insurance=auto_insurances)
 
 # Login Route
 @app.route("/login", methods=['GET', 'POST'])
