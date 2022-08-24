@@ -2,7 +2,6 @@
 # =============== IMPORTS ===============
 # ***************************************
 from flask import request
-
 from flask import Flask, render_template, url_for, redirect, flash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous.url_safe import URLSafeTimedSerializer
@@ -15,7 +14,8 @@ from flask_mail import Mail, Message
 # from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
 # from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
-
+from datetime import datetime
+import random
 
 # ***************************************
 # =============== CONFIGS ===============
@@ -133,6 +133,7 @@ class HomeInsurance(db.Model, UserMixin):
     end_date = db.Column(db.Date(), nullable=False)
     premium = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(1), nullable=False)
+
 class AutoInsurance(db.Model, UserMixin):
     policy_id = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
     vin = db.Column(db.Integer, db.ForeignKey(Vehicle.vin), primary_key=True)
@@ -271,16 +272,31 @@ def add_auto_insurance():
     state = request.form.get("state")
     first = request.form.get("first")
     last = request.form.get("last")
-    dob = request.form.get("dob")
-    print("-"*1500)
-    print(vin,make,dln,first)
+    dob = "1990-12-11" #request.form.get("dob")
+    dob = datetime(int(dob.split("-")[0]), int(dob.split("-")[1]), int(dob.split("-")[2]))
     new_vehicle = Vehicle(vin=vin, make=make, model=model, year=year, status=status)
     db.session.add(new_vehicle)
     new_driver = Driver(dln=dln, state=state, first_name=first, last_name=last, dob=dob)
     db.session.add(new_driver)
     db.session.commit()
 
-    return redirect(url_for('add_auto_insurance'))
+
+    start_date=datetime(2022,1,1)
+    end_date= datetime(2022,2,2)
+    policy_id = random.randint(10000,1000000)
+    new_auto_insurance = AutoInsurance(policy_id= policy_id, vin=vin ,start_date= start_date ,end_date=end_date , premium=200 , status ='C')
+    db.session.add(new_auto_insurance)
+    db.session.commit()
+
+    new_insurance=Insurance(policy_id=policy_id, policy_type='A')
+    db.session.add(new_insurance)
+    db.session.commit()
+
+    new_customer_insurance = CustomerInsurance(cid=current_user.id ,policy_id=policy_id)
+    db.session.add(new_customer_insurance)
+    db.session.commit()
+
+    return "Success"
 
 
 @app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
