@@ -12,38 +12,39 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 
 
 users = [
-        ['RossBennett','RossBennett@gmail.com','12345'],
-        ['JoCastillo','JoCastillo@gmail.com','12345'],
-        ['WendyKelly','WendyKelly@gmail.com','12345'],
-        ['SheilaRobinson','SheilaRobinson@gmail.com','12345']
+        ['admin', 'merchantjash@gmail.com', 'admin'],
+        ['rossBennett','RossBennett@gmail.com','12345'],
+        ['joCastillo','JoCastillo@gmail.com','12345'],
+        ['wendyKelly','WendyKelly@gmail.com','12345'],
+        ['sheilaRobinson','SheilaRobinson@gmail.com','12345']
         ]
 
 customers = [
-        [1,'Ross','Bennett','872 Learn st','Williamsport',17701,'M','S'],
-        [2,'Jo','Castillo','7933 Mcclellan Rd','Champaign',61821,'F','W'],
-        [3,'Wendy','Kelly','2675 Harrison Ct','Baltimore',21206,'F','S'],
-        [4,'Sheila','Robinson','3524 Frances Ct','Montclair',17042,'F','S'],
-        [5,'Ronnie','Caldwell','2230 Oak Lawn Ave','Hyde Park',12136,'M','M'],
-        [6,'Sofia','Wade','18 Learn st','Roanoke',24012,'F','S'],
-        [7,'Ashley','Rodriguez','1141 W Belt Line Rd','Palos Verdes Peninsula',90274,'F','S'],
-        [8,'Isobel','Williams','262 Poplar Dr','Lebanon',17042,'F','S'],
-        [9,'Harold','Powell','2694 Valwood Pkwy','Westlake',44145,'M','M'],
-        [10,'Jane','Knight','5755 Hickory Creek Dr','Pelham',35124,'F','M'],
-        [11,'Scott','Johnson','53 Pockrus Page Rd','Graham',27253,'M','M'],
-        [12,'Daniel','Cook','1124 Valwood Pkwy','Cumming',30040,'M','S'],
-        [13,'Terrence','Watts','7013 Fairview St','Lacey',98503,'M','S'],
-        [14,'Mike','Fletcher','8120 Avondale Ave','Addison',60101,'M','S'],
-        [15,'Emily','Russell','8807 E Center St','Tacoma',98444,'F','S'],
-        [16,'Dan','Ferguson','4960 Edwards Rd','Lakeland',33801,'M','M'],
-        [17,'Clara','Sims','5689 Daisy Dr','Nazareth',18064,'M','S'],
-        [18,'Denise','Burke','9124 Hunters Creek Dr','Beckley',25801,'F','S'],
-        [19,'Violet','Robertson','1183 Ash Dr','Leesburg',20175,'F','M'],
-        [20,'Jim','Robinson','2684 Daisy Dr','Homestead',33030,'M','S'],
-        [21,'Ronnie','Jordan','8477 Hogan St','Sun City',85351,'M','S'],
-        [22,'Lily','Vasquez','Learn st','Stuart',34997,'F','S'],
-        [23,'Esther','Webb','9143 Stevens Creek Blvd','Woburn',11801,'F','S'],
-        [24,'Enrique','Lawson','7010 Groveland Terrace','Tuckerton',28087,'M','S'],
-        [25,'Ana','Williamson','3291 Locust Rd','Franklin',22038,'F','M']
+        [1, 'ross','Ross','Bennett','872 Learn st','Williamsport',17701,'M','S'],
+        [2, 'joCastillo','Jo','Castillo','7933 Mcclellan Rd','Champaign',61821,'F','W'],
+        [3, 'wendyKelly','Wendy','Kelly','2675 Harrison Ct','Baltimore',21206,'F','S'],
+        [4, 'sheila','Sheila','Robinson','3524 Frances Ct','Montclair',17042,'F','S'],
+        [5, 'ronnie','Ronnie','Caldwell','2230 Oak Lawn Ave','Hyde Park',12136,'M','M'],
+        [6, 'sofia','Sofia','Wade','18 Learn st','Roanoke',24012,'F','S'],
+        [7, 'ashley','Ashley','Rodriguez','1141 W Belt Line Rd','Palos Verdes Peninsula',90274,'F','S'],
+        [8, 'isobel','Isobel','Williams','262 Poplar Dr','Lebanon',17042,'F','S'],
+        [9, 'harold','Harold','Powell','2694 Valwood Pkwy','Westlake',44145,'M','M'],
+        [10, 'jane','Jane','Knight','5755 Hickory Creek Dr','Pelham',35124,'F','M'],
+        [11, 'scott','Scott','Johnson','53 Pockrus Page Rd','Graham',27253,'M','M'],
+        [12, 'daniel','Daniel','Cook','1124 Valwood Pkwy','Cumming',30040,'M','S'],
+        [13, 'terrence','Terrence','Watts','7013 Fairview St','Lacey',98503,'M','S'],
+        [14, 'mike','Mike','Fletcher','8120 Avondale Ave','Addison',60101,'M','S'],
+        [15, 'emily','Emily','Russell','8807 E Center St','Tacoma',98444,'F','S'],
+        [16, 'dan','Dan','Ferguson','4960 Edwards Rd','Lakeland',33801,'M','M'],
+        [17, 'clara','Clara','Sims','5689 Daisy Dr','Nazareth',18064,'M','S'],
+        [18, 'denise','Denise','Burke','9124 Hunters Creek Dr','Beckley',25801,'F','S'],
+        [19, 'violet','Violet','Robertson','1183 Ash Dr','Leesburg',20175,'F','M'],
+        [20, 'jim','Jim','Robinson','2684 Daisy Dr','Homestead',33030,'M','S'],
+        [21, 'ronnie','Ronnie','Jordan','8477 Hogan St','Sun City',85351,'M','S'],
+        [22, 'lily','Lily','Vasquez','Learn st','Stuart',34997,'F','S'],
+        [23, 'esther','Esther','Webb','9143 Stevens Creek Blvd','Woburn',11801,'F','S'],
+        [24, 'enrique','Enrique','Lawson','7010 Groveland Terrace','Tuckerton',28087,'M','S'],
+        [25, 'ana','Ana','Williamson','3291 Locust Rd','Franklin',22038,'F','M']
         ]
 
 customer_insurance =[
@@ -184,8 +185,8 @@ def add_user(u):
     db.session.commit()
 
 def add_customer(c):
-    new_customer = original_app.Customer(cid=c[0], first_name=c[1], last_name=c[2],\
-                                         street=c[3], city=c[4], zipcode=c[5], gender=c[6], marital_status=c[7])
+    new_customer = original_app.Customer(cid=c[0], username=c[1], first_name=c[2], last_name=c[3],\
+                                         street=c[4], city=c[5], zipcode=c[6], gender=c[7], marital_status=c[8])
     db.session.add(new_customer)
     db.session.commit()
 

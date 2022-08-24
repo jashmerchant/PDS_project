@@ -69,6 +69,12 @@
                                         <input type="text" name="A" value="A" id="disabledTextInput"
                                             class="form-control" disabled>
                                     </div>
+                                    <!-- <div class="form mb-3">
+                                        <label for="disabledTextInput" class="form-label">Username</label>
+                                        <input type="text" name="{{username}}" value="{{username}}"
+                                            id="disabledTextInput" class="form-control" disabled>
+                                    </div> -->
+                                    {% if not is_customer %}
                                     <div class="form-floating mb-3">
                                         <input type="text" class="form-control rounded-3" id="floatingInput"
                                             placeholder="First Name" required name="first_name">
@@ -123,6 +129,7 @@
 
                                         <label for="floatingCity">City</label>
                                     </div>
+                                    {% endif %}
                                     <div class="form-floating mb-3">
                                         <input type="number" class="form-control rounded-3" id="floatingInput"="vin"
                                             name="vin" placeholder="VIN" required>
@@ -212,25 +219,25 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-5 pt-0">
-                                <form class="" method="POST">
+                                <form action="{{ url_for('home_insurance_submit') }}" class="" method="POST">
                                     <div class="form mb-3">
                                         <label for="disabledTextInput" class="form-label">Insurance Type</label>
                                         <input type="text" name="insurancetype" value="H" id="disabledTextInput"
                                             class="form-control" disabled>
                                     </div>
-
+                                    {% if not is_customer %}
                                     <div class="form-floating mb-3">
                                         <input type="text" class="form-control rounded-3" id="floatingInput"
-                                            placeholder="First Name" required>
+                                            name="fname" placeholder="First Name" required>
                                         <label for="floatingInput">First Name</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input type="text" class="form-control rounded-3" id="floatingInput"
-                                            placeholder="Last Name" required>
+                                            name="lname" placeholder="Last Name" required>
                                         <label for="floatingInput">Last Name</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect"
+                                        <select class="form-select" id="floatingSelect" name="married"
                                             aria-label="Floating label select example" required>
                                             <option value="S">Single</option>
                                             <option value="M">Married</option>
@@ -256,19 +263,43 @@
                                         </div>
                                     </div>
                                     <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingText"
+                                            name="street" placeholder="Street" required>
+
+                                        <label for="floatingText">Street</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingZipcode"
+                                            name="zip" placeholder="Zipcode" required>
+
+                                        <label for="floatingZipcode">Zipcode</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control rounded-3" id="floatingCity" name="city"
+                                            placeholder="City" required>
+
+                                        <label for="floatingCity">City</label>
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-3" id="floatingInput"="hid"
+                                            name="hid" placeholder="HID" required>
+                                        <label for="floatingInput">Home Identification #</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
                                         <input type="number" class="form-control rounded-3" id="floatingInput"
-                                            placeholder="Purchase Value" required>
+                                            name="pval" placeholder="Purchase Value" required>
                                         <label for="floatingInput">Purchase Value</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input type="number" class="form-control rounded-3" id="floatingInput"
-                                            placeholder="Area (sq ft)" required>
+                                            name="area" placeholder="Area (sq ft)" required>
 
                                         <label for="floatingInput">Area (sq ft)</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingDate"
-                                            placeholder="Date" required>
+                                        <input type="date" class="form-control rounded-3" id="floatingDate" name="date"
+                                            placeholder="YYYY-DD-MM" required>
 
                                         <label for="floatingDate">Purchase Date</label>
                                     </div>
@@ -324,7 +355,7 @@
                                         </div>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect"
+                                        <select class="form-select" id="floatingSelect" name="pool"
                                             aria-label="Floating label select example" required>
                                             <option value="U">Underground swimming pool</option>
                                             <option value="O">Overground swimming pool</option>
@@ -335,7 +366,7 @@
                                         <label for="floatingSelect">Swimming Pool</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="floatingSelect"
+                                        <select class="form-select" id="floatingSelect" name="house"
                                             aria-label="Floating label select example" required>
                                             <option value="S">Single Family</option>
                                             <option value="M">Multi Family</option>
@@ -343,24 +374,6 @@
                                             <option value="T">Town House</option>
                                         </select>
                                         <label for="floatingSelect">Type of Home</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingText"
-                                            placeholder="Street" required>
-
-                                        <label for="floatingText">Street</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingZipcode"
-                                            placeholder="Zipcode" required>
-
-                                        <label for="floatingZipcode">Zipcode</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control rounded-3" id="floatingCity"
-                                            placeholder="City" required>
-
-                                        <label for="floatingCity">City</label>
                                     </div>
                                     <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary"
                                         type="submit">Submit</button>

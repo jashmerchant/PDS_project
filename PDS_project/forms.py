@@ -1,25 +1,25 @@
 from flask import Flask, render_template, url_for, redirect, flash
 from flask_wtf import FlaskForm
-from app import User
+# from app import User
 from wtforms import IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
 from wtforms.validators import InputRequired, Length, ValidationError
 
-class RegistrationForm(FlaskForm):
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Username"})
-    email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
-    submit = SubmitField("Register")
+# class RegistrationForm(FlaskForm):
+#     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Username"})
+#     email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
+#     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
+#     submit = SubmitField("Register")
 
-    # Validate if username is unique
-    def validate_username(self, username):
-        # Try to look through db to find a similar username
-        existing_user_username = User.query.filter_by(
-            username=username.data).first()
-        # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
-        if existing_user_username:
-            flash("That username already exists. Please choose a different one.", "error")
-            raise ValidationError(
-                'That username already exists. Please choose a different one.')
+#     # Validate if username is unique
+#     def validate_username(self, username):
+#         # Try to look through db to find a similar username
+#         existing_user_username = User.query.filter_by(
+#             username=username.data).first()
+#         # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
+#         if existing_user_username:
+#             flash("That username already exists. Please choose a different one.", "error")
+#             raise ValidationError(
+#                 'That username already exists. Please choose a different one.')
 
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Username"})

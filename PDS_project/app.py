@@ -1,21 +1,21 @@
 # ***************************************
 # =============== IMPORTS ===============
 # ***************************************
-from flask import request
-from flask import Flask, render_template, url_for, redirect, flash
+from flask import Flask, render_template, url_for, redirect, flash, request
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from flask_sqlalchemy import SQLAlchemy
 from flask_table import Table, Col
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-# from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm
 import forms
 from flask_mail import Mail, Message
-# from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
-# from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms import BooleanField, IntegerField, StringField, EmailField, PasswordField, RadioField, SubmitField, DateField
+from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 import random
+
 
 # ***************************************
 # =============== CONFIGS ===============
@@ -87,6 +87,7 @@ class VehicleDriver(db.Model, UserMixin):
 
 class Customer(db.Model, UserMixin):
     cid = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False)
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
     street = db.Column(db.String(30), nullable=False)
@@ -112,6 +113,7 @@ class Payment(db.Model, UserMixin):
     method = db.Column(db.String(6), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
 
+
 class Home(db.Model, UserMixin):
     hid = db.Column(db.Integer, primary_key=True)
     purchase_date = db.Column(db.Date(), nullable=False)
@@ -127,7 +129,7 @@ class Home(db.Model, UserMixin):
     zipcode = db.Column(db.Integer, nullable=False)
 
 class HomeInsurance(db.Model, UserMixin):
-    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True)
+    hid = db.Column(db.Integer, db.ForeignKey(Home.hid), primary_key=True, unique=True)
     policy_id = db.Column(db.Integer, db.ForeignKey(Insurance.policy_id), primary_key=True)
     start_date = db.Column(db.Date(), nullable=False)
     end_date = db.Column(db.Date(), nullable=False)
@@ -162,6 +164,23 @@ class CustomerInsurancesTable(Table):
     end_date = Col('End Date')
     premium = Col('Premium')
 
+class RegistrationForm(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Username"})
+    email = EmailField(validators=[InputRequired()], render_kw={"placeholder": "Enter Email"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Enter Password"})
+    submit = SubmitField("Register")
+
+    # Validate if username is unique
+    def validate_username(self, username):
+        # Try to look through db to find a similar username
+        existing_user_username = User.query.filter_by(
+            username=username.data).first()
+        # If it founds a similar username in db it'll raise a validation error thus guaranting unique usernames
+        if existing_user_username:
+            flash("That username already exists. Please choose a different one.", "error")
+            raise ValidationError(
+                'That username already exists. Please choose a different one.')
+
 # ***************************************
 # ================ ROUTES ===============
 # ***************************************
@@ -191,9 +210,13 @@ def home():
     home_table = CustomerInsurancesTable(home_insurances)
     auto_table = CustomerInsurancesTable(auto_insurances)
 
-    
+    this_customer = Customer.query.filter_by(username=username).first()
+    if this_customer == None:
+        is_customer = False
+    else:
+        is_customer = True
 
-    return render_template("home.html", auto_table = auto_table, home_table=home_table)
+    return render_template("home.html", auto_table = auto_table, home_table=home_table, is_customer=is_customer)
 
 # My Policies Route
 @app.route("/mypolicies")
@@ -265,16 +288,20 @@ def send_password_reset_link(user):
 
 @app.route("/newautoinsurance", methods=['GET', 'POST'])
 def add_auto_insurance():
-    first_name= request.form.get("first_name")
-    last_name= request.form.get("last_name")
-    marital_status = request.form.get("marital_status")
-    gender = request.form.get("gender")
-    street = request.form.get("street")
-    city = request.form.get("city")
-    zipcode = request.form.get("zipcode")
-    new_customer = Customer(first_name=first_name, last_name=last_name, marital_status=marital_status, gender=gender, street=street, city=city, zipcode=zipcode)
-    db.session.add(new_customer)
-    db.session.commit()
+    username = current_user.username
+    this_customer = Customer.query.filter_by(username=username).first()
+    print(f'AI {this_customer}')
+    if this_customer == None:
+        first_name= request.form.get("first_name")
+        last_name= request.form.get("last_name")
+        marital_status = request.form.get("marital_status")
+        gender = request.form.get("gender")
+        street = request.form.get("street")
+        city = request.form.get("city")
+        zipcode = request.form.get("zipcode")
+        new_customer = Customer(username=username, first_name=first_name, last_name=last_name, marital_status=marital_status, gender=gender, street=street, city=city, zipcode=zipcode)
+        db.session.add(new_customer)
+        # db.session.commit()
     vin = request.form.get("vin")
     make = request.form.get("make")
     model = request.form.get("model")
@@ -290,16 +317,16 @@ def add_auto_insurance():
     db.session.add(new_vehicle)
     new_driver = Driver(dln=dln, state=state, first_name=first, last_name=last, dob=dob)
     db.session.add(new_driver)
-    db.session.commit()
+    # db.session.commit()
     start_date=datetime(2022,1,1)
     end_date= datetime(2022,2,2)
     policy_id = random.randint(10000,1000000)
     new_auto_insurance = AutoInsurance(policy_id= policy_id, vin=vin ,start_date= start_date ,end_date=end_date , premium=200 , status ='C')
     db.session.add(new_auto_insurance)
-    db.session.commit()
+    # db.session.commit()
     new_insurance=Insurance(policy_id=policy_id, policy_type='A')
     db.session.add(new_insurance)
-    db.session.commit()
+    # db.session.commit()
     new_customer_insurance = CustomerInsurance(cid=current_user.id ,policy_id=policy_id)
     db.session.add(new_customer_insurance)
     db.session.commit()
@@ -328,7 +355,7 @@ def reset_token(token):
 # Registration Route
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    form = forms.RegistrationForm()
+    form = RegistrationForm()
     # Hashes password and stores in db on successful registration of a user
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
@@ -384,11 +411,47 @@ def delete_user(id):
 
 @app.route("/homeinsurance", methods=['GET', 'POST'])
 def home_insurance_submit():
-    pass
-    # new_home = Home(purchase_date, purchase_value, area, home_type, aff, hss, sp, basement, street, city, zipcode)
-    # new_home_policy = HomeInsurance(start_date, end_date, premium, status)
-
-
+    hid = request.form.get("hid")
+    username = current_user.username
+    this_customer = Customer.query.filter_by(username=username).first()
+    print(f'HI {this_customer}')
+    if this_customer == None:
+        fname = request.form.get("fname")
+        lname = request.form.get("lname")
+        married_status = request.form.get("married")
+        gender = request.form.get("gender")
+        street = request.form.get("street")
+        zip = request.form.get("zip")
+        city = request.form.get("city")
+        new_customer = Customer(username=username, first_name=fname, last_name=lname, marital_status=married_status, gender=gender, street=street, city=city, zipcode=zip)
+        db.session.add(new_customer)
+        # db.session.commit()
+    purchase_value = request.form.get("pval")
+    area = request.form.get("area")
+    aff = request.form.get("aff")
+    hss = request.form.get("hss")
+    bs = request.form.get("bs")
+    pool = request.form.get("pool")
+    house_type = request.form.get("house")
+    purchase_date = request.form.get("date")
+    dt = datetime.strptime(purchase_date, '%Y-%m-%d').date()
+    start_date=datetime(2022,1,1)
+    end_date= datetime(2022,2,2)
+    policy_id = random.randint(10000,1000000)
+    new_home = Home(hid=hid, purchase_date=dt, purchase_value=purchase_value, area=area, home_type=house_type, aff=aff, hss=hss, sp=pool, basement=bs, street=street, city=city, zipcode=zip)
+    db.session.add(new_home)
+    # db.session.commit()
+    new_home_insurance = HomeInsurance(policy_id=policy_id, hid=hid, start_date=start_date, end_date=end_date, premium=200 , status ='C')
+    db.session.add(new_home_insurance)
+    # db.session.commit()
+    new_insurance=Insurance(policy_id=policy_id, policy_type='H')
+    db.session.add(new_insurance)
+    # db.session.commit()
+    new_customer_insurance = CustomerInsurance(cid=current_user.id, policy_id=policy_id)
+    db.session.add(new_customer_insurance)
+    db.session.commit()
+    flash("Insurance application submitted!", "success")
+    return redirect(url_for('home'))
 
 
 if __name__ == "__main__":
