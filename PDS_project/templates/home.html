@@ -44,6 +44,18 @@
 
     <div class="col-lg-8 mx-auto p-3 py-md-5">
         <main>
+            {% for message in get_flashed_messages(category_filter=["error"]) %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-triangle-exclamation"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% for message in get_flashed_messages(category_filter=["success"]) %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-check"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
             <h1>Get insured today</h1>
             <p class="fs-5 col-md-8">Quickly and easily get started with WDS's home and auto insurance policies.
             </p>
