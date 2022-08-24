@@ -22,13 +22,13 @@
       ],
       datasets: [{
         data: [
-          15339,
-          21345,
-          18483,
-          24003,
-          23489,
-          24092,
-          12034
+          3,
+          10,
+          6,
+          0,
+          2,
+          4,
+          9
         ],
         lineTension: 0,
         backgroundColor: 'transparent',
@@ -40,6 +40,10 @@
     options: {
       scales: {
         yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'New Users'
+          },
           ticks: {
             beginAtZero: false
           }
