@@ -1,6 +1,8 @@
 # ***************************************
 # =============== IMPORTS ===============
 # ***************************************
+from flask import request
+
 from flask import Flask, render_template, url_for, redirect, flash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous.url_safe import URLSafeTimedSerializer
@@ -258,11 +260,22 @@ def send_password_reset_link(user):
      send_mail(user)
 
 
-@app.route("/newautoinsurance", methods=['POST'])
-def add_auto_insurance(vin, make, model, year, status, dln, state, first, last, dob):
+@app.route("/newautoinsurance", methods=['GET', 'POST'])
+def add_auto_insurance():
+    vin = request.form.get("vin")
+    make = request.form.get("make")
+    model = request.form.get("model")
+    year = request.form.get("year")
+    status = request.form.get("status")
+    dln = request.form.get("dln")
+    state = request.form.get("state")
+    first = request.form.get("first")
+    last = request.form.get("last")
+    dob = request.form.get("dob")
+    print("-"*1500)
+    print(vin,make,dln,first)
     new_vehicle = Vehicle(vin=vin, make=make, model=model, year=year, status=status)
     db.session.add(new_vehicle)
-
     new_driver = Driver(dln=dln, state=state, first_name=first, last_name=last, dob=dob)
     db.session.add(new_driver)
     db.session.commit()
