@@ -59,7 +59,7 @@ class User(db.Model, UserMixin):
     def verify_token(token):
         serial = Serializer(app.config['SECRET_KEY'])
         try:
-            user_id = serial.loads(token)['user_id'] 
+            user_id = serial.loads(token)['user_id']
         except:
             return None
         return User.query.get(user_id)
@@ -256,6 +256,18 @@ def send_password_reset_link(user):
                       token = password_reset_serializer.dumps(user.email, salt='password-reset-salt'),
                        _external=True)
      send_mail(user)
+
+
+@app.route("/newautoinsurance", methods=['POST'])
+def add_auto_insurance(vin, make, model, year, status, dln, state, first, last, dob):
+    new_vehicle = Vehicle(vin=vin, make=make, model=model, year=year, status=status)
+    db.session.add(new_vehicle)
+
+    new_driver = Driver(dln=dln, state=state, first_name=first, last_name=last, dob=dob)
+    db.session.add(new_driver)
+    db.session.commit()
+
+    return redirect(url_for('add_auto_insurance'))
 
 
 @app.route("/forgotpassword/<token>", methods=['GET', 'POST'])
