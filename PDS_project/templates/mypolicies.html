@@ -41,22 +41,57 @@
             </div>
         </div>
     </nav>
-
-    <div class="container">
-        <div class="table-responsive">
-            <table class="table table-bordered border-primary">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+    <h2>Your Home Policies</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered border-primary">
+            <thead>
+                <tr>
+                    <th scope="col">Policy ID</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Premium</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ins in home_insurances %}
+                <tr>
+                    <td>{{ ins.policy_id }}</td>
+                    <td>{{ ins.start_date }}</td>
+                    <td>{{ ins.end_date }}</td>
+                    <td>{{ ins.premium }}</td>
+                    <td>{{ ins.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h2>Your Auto Policies</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered border-primary">
+            <thead>
+                <tr>
+                    <th scope="col">Policy ID</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Premium</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Invoice</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ins in auto_insurances %}
+                <tr>
+                    <td>{{ ins.policy_id }}</td>
+                    <td>{{ ins.start_date }}</td>
+                    <td>{{ ins.end_date }}</td>
+                    <td>{{ ins.premium }}</td>
+                    <td>{{ ins.status }}</td>
+                    <td><button class="btn btn-warning btn-sm">Pay now</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <!-- Bootstrap scripts -->

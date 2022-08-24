@@ -223,7 +223,18 @@ def home():
 @app.route("/mypolicies")
 @login_required
 def mypolicies():
-    return render_template("mypolicies.html")
+    home_insurances = HomeInsurance.query.join(Insurance, HomeInsurance.policy_id == Insurance.policy_id ) \
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+
+    auto_insurances = AutoInsurance.query.join(Insurance, AutoInsurance.policy_id == Insurance.policy_id ) \
+        .join(CustomerInsurance, CustomerInsurance.policy_id == Insurance.policy_id) \
+        .filter(CustomerInsurance.cid == current_user.id).all() \
+    
+    print(home_insurances)
+    print(auto_insurances)
+
+    return render_template("mypolicies.html", home_insurances= home_insurances, auto_insurances=auto_insurances)
 
 # Login Route
 @app.route("/login", methods=['GET', 'POST'])
@@ -387,8 +398,7 @@ def customers():
     if username == "admin":
         Customers = Customer.query.all()
         return render_template("customers.html", customers=Customers)
-    else:
-        return redirect(url_for('home'))
+    return redirect(url_for('home'))
 
 @app.route("/admin/reports")
 @login_required
